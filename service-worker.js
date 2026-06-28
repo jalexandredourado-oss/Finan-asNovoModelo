@@ -2,8 +2,8 @@ const CACHE_NAME = 'finance-app-cache-v1';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
-  '/icon-192.jfif',
-  '/icon-512.png'
+  '/icon-192.jpeg',
+  '/icon-512.jpeg'
 ];
 
 // Evento de Instalação: Salva os arquivos essenciais no cache
