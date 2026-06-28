@@ -1,7 +1,12 @@
 {
-    "short_name": "AppFinanceiro",
     "name": "Aplicativo Financeiro e Controle",
+    "short_name": "AppFinanceiro",
     "description": "Um aplicativo completo para controle financeiro, investimentos e gerenciamento de capital.",
+    "start_url": "./index.html",
+    "display": "standalone",
+    "background_color": "#000000",
+    "theme_color": "#2563eb",
+    "orientation": "portrait",
     "icons": [
     {
       "src": "./icon-192.jfif",
@@ -12,14 +17,9 @@
     {
       "src": "./icon-512.png",
       "sizes": "512x512", 
-      "type": "image/jpeg",
+      "type": "image/png",
       "purpose": "any maskable"
     }
-  ],
-    "start_url": "./index.html",
-    "background_color": "#000000",
-    "display": "standalone",
-    "theme_color": "#2563eb",
-    "orientation": "portrait"
+  ]
 
 }
