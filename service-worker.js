@@ -2,7 +2,7 @@ const CACHE_NAME = 'finance-app-cache-v1';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
-  '/icon-192.jpg',
+  '/icon financas-domesticas.jpeg',
   '/icon-512.jpeg'
 ];
 
