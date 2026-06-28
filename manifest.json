@@ -3,8 +3,8 @@
     "name": "Aplicativo Financeiro e Controle",
     "icons": [
         {
-            "src": "icon-192.jpeg",
-            "type": "image/jpeg",
+            "src": "icon-192.jfif",
+            "type": "image/jfif",
             "sizes": "192x192"
         },
         {
