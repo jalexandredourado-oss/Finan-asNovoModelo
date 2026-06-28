@@ -1,6 +1,6 @@
 {
     "name": "Aplicativo Financeiro e Controle",
-    "short_name": "AppFinanceiro",
+    "short_name": "Finanças Domésticas",
     "description": "Um aplicativo completo para controle financeiro, investimentos e gerenciamento de capital.",
     "start_url": "./index.html",
     "display": "standalone",
