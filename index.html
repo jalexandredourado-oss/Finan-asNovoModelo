@@ -6,11 +6,11 @@
   <title>FinançasPro - O seu controle de saldo inteligente</title>
   
   <!-- PWA Headers -->
+  <link class="rounded-2xl" rel="apple-touch-icon" href="./icon-192.jfif">
   <link rel="manifest" href="./manifest.json">
   <meta name="theme-color" content="#0b1329">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <link class="rounded-2xl" rel="apple-touch-icon" href="./icon financas-domesticas.jpeg">
   
   <link rel="icon" type="image/svg+xml" href='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" rx="128" fill="%2310b981"/><path d="M372 140H140c-22 0-40 18-40 40v152c0 22 18 40 40 40h232c22 0 40-18 40-40V180c0-22-18-40-40-40zm-16 116h-96c-18 0-32-14-32-32s14-32 32-32h96c9 0 16 7 16 16v32c0 9-7 16-16 16z" fill="%23059669" opacity="0.3"/><path d="M368 160H144c-26.5 0-48 21.5-48 48v96c0 26.5 21.5 48 48 48h224c26.5 0 48-21.5 48-48v-96c0-26.5-21.5-48-48-48zm-16 112h-96c-17.7 0-32-14.3-32-32s14.3-32 32-32h96c8.8 0 16 7.2 16 16v32c0 8.8-7.2 16-16 16z" fill="%23ffffff"/><circle cx="288" cy="240" r="12" fill="%2310b981"/></svg>'>
 
@@ -39,7 +39,6 @@
       scrollbar-width: none;
     }
 
-    /* Cores personalizadas inspiradas na imagem image_3377a1.png */
     .bg-panel-dark {
       background-color: #080d1a !important;
     }
@@ -173,7 +172,7 @@
   <!-- MAIN APP CONTAINER -->
   <div id="app-screen" class="w-full max-w-6xl min-h-screen flex flex-col bg-panel-dark px-3 md:px-8 py-6 z-10">
     
-    <!-- Cabeçalho Principal (FinançasPro style) -->
+    <!-- Cabeçalho Principal -->
     <header class="flex flex-col lg:flex-row justify-between items-stretch lg:items-center gap-4 pb-6 border-b border-slate-850 no-print">
       <div class="flex items-center gap-3">
         <div class="bg-emerald-500 p-3 rounded-2xl shadow-lg shadow-emerald-500/20">
@@ -218,7 +217,7 @@
       <!-- ABA 1: PAINEL -->
       <section id="tab-dashboard" class="tab-content space-y-6 animate-in fade-in duration-300">
         
-        <!-- Cartões de Resumos de Saldo (R$) -->
+        <!-- Cartões de Resumos de Saldo -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
           
           <!-- Card Saldo Consolidado -->
@@ -315,6 +314,7 @@
         
         <div class="bg-card-dark p-6 rounded-3xl">
           <div class="flex items-center justify-between mb-6">
+            <h2 class="text-lg font-black text-white uppercase tracking-wider">Novo Lançamento</h2>
             <div class="flex bg-slate-900/80 p-1 rounded-xl border border-slate-800 select-none">
               <button id="btn-type-expense" class="px-4 py-2 rounded-lg text-xs font-black uppercase tracking-wider bg-rose-600 text-white transition-all">Despesa</button>
               <button id="btn-type-income" class="px-4 py-2 rounded-lg text-xs font-black uppercase tracking-wider text-slate-400 hover:text-white transition-all">Receita</button>
@@ -436,10 +436,10 @@
 
       </section>
 
-      <!-- ABA 4: AJUSTES (CONTAS, CATEGORIAS, SINCRO) -->
+      <!-- ABA 4: AJUSTES -->
       <section id="tab-settings" class="tab-content hidden max-w-2xl mx-auto space-y-6 animate-in fade-in duration-200">
         
-        <!-- Tabs Internas do Painel de Ajustes (Otimizado para ecrãs pequenos) -->
+        <!-- Tabs Internas do Painel de Ajustes -->
         <div class="flex gap-1 p-1 bg-card-dark rounded-xl border border-slate-800">
           <button id="settings-tab-cards" class="flex-1 py-2.5 rounded-lg text-[10px] sm:text-xs font-black uppercase transition-all bg-emerald-600 text-slate-955 flex items-center justify-center gap-1">
             <i data-lucide="credit-card" class="w-3.5 h-3.5"></i> Contas
@@ -452,7 +452,7 @@
           </button>
         </div>
 
-        <!-- Seção: Gerir Contas (SUBABA CONTAS ATUALIZADA) -->
+        <!-- Seção: Gerir Contas -->
         <div id="settings-section-cards" class="space-y-4">
           <form id="form-add-card" class="bg-card-dark p-6 rounded-3xl space-y-4">
             <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest font-bold">Criar Nova Conta Bancária</h3>
@@ -564,6 +564,7 @@
         <form id="form-edit-transaction" class="space-y-4 text-left">
            <input type="hidden" id="edit-trans-id" />
            <input type="hidden" id="edit-trans-type" />
+           <input type="hidden" id="edit-trans-installments-count" />
            
            <div class="space-y-1">
               <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-2">Descrição</label>
@@ -657,35 +658,30 @@
       customMethods: [],
       activeTab: 'dashboard',
       selectedMonth: `${(new Date().getMonth() + 1).toString().padStart(2, '0')}/${new Date().getFullYear()}`,
-      activeType: 'expense', // Formulário: expense | income
+      activeType: 'expense', 
       isInstallment: false,
       searchQuery: '',
       filterCategory: 'all',
-      filterType: 'all', // Histórico: all | expense | income
+      filterType: 'all', 
       sharingCode: '',
       firebaseConfig: null
     };
 
-    // Firebase/Firestore Variables
     let db = null;
     let auth = null;
     let isCloudConnected = false;
     let cloudUnsubscribe = null;
     let authUser = null;
 
-    // Helper: Formatação de Moeda Brasileira (R$)
     function formatBRL(val) {
       return val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
     }
 
-    // Conversor seguro de string formatada R$ em Float decimal
     function parseBRLFloat(valStr) {
        if (!valStr) return 0;
-       // Remove todos os pontos e substitui a vírgula pelo ponto
        return parseFloat(valStr.replace(/\./g, '').replace(',', '.')) || 0;
     }
 
-    // Helper: Formatação de data de YYYY-MM-DD para DD/MM/YYYY
     function formatDate(dateStr) {
        if (!dateStr) return '';
        const parts = dateStr.split('-');
@@ -695,7 +691,6 @@
        return dateStr;
     }
 
-    // Inicialização da Máscara Dinâmica nos Inputs de Valor
     function setupCurrencyMasks() {
        const inputs = [
           document.getElementById('transaction-amount'),
@@ -707,16 +702,11 @@
           
           input.addEventListener('input', (e) => {
              let value = e.target.value;
-             
-             // Filtra apenas números
              value = value.replace(/\D/g, "");
-             
              if (value === "") {
                 e.target.value = "";
                 return;
              }
-             
-             // Divide por 100 para converter os últimos dígitos digitados em centavos
              let floatValue = parseFloat(value) / 100;
              e.target.value = floatValue.toLocaleString('pt-BR', {
                 minimumFractionDigits: 2,
@@ -726,7 +716,6 @@
        });
     }
 
-    // Modal Confirmation Utility
     function showConfirm(title, message, executeCallback) {
       const modal = document.getElementById('confirm-modal');
       document.getElementById('confirm-modal-title').textContent = title;
@@ -739,7 +728,6 @@
       };
     }
 
-    // Toast Utility
     function showToast(msg, type = 'info') {
       const toast = document.getElementById('toast');
       const text = document.getElementById('toast-text');
@@ -764,7 +752,6 @@
       }, 2500);
     }
 
-    // LocalStorage Get/Set
     function getLocalCollection(collectionName) {
       const data = localStorage.getItem(collectionName);
       return data ? JSON.parse(data) : [];
@@ -806,7 +793,6 @@
       }
     }
 
-    // Operações Cloud/Local Inteligentes
     const DB = {
       async syncToCloud() {
         if (!db || !authUser || !state.sharingCode) return;
@@ -858,7 +844,6 @@
       state.customMethods = getLocalCollection(`methods_${LOCAL_KEY}`);
     }
 
-    // Realtime Sync Listener
     function activateRealtimeSync() {
       if (!db || !authUser || !state.sharingCode) return;
       if (cloudUnsubscribe) cloudUnsubscribe();
@@ -931,7 +916,6 @@
        }
     }
 
-    // Cálculos de saldo baseados nas transações
     function expandedTransactions() {
       let expanded = [];
       state.transactions.forEach(t => {
@@ -978,11 +962,9 @@
       return { cardBalances, consolidated };
     }
 
-    // Render: Painel / Dashboard
     function renderDashboard() {
       const { cardBalances } = calculateBalances();
       
-      // Totais Período
       let incomeSum = 0;
       let expenseSum = 0;
       expandedTransactions().forEach(t => {
@@ -990,7 +972,6 @@
         else expenseSum += t.displayAmount;
       });
 
-      // Cálculo do Saldo Geral Consolidado baseado em (Total de Receitas - Total de Despesas)
       const netBalance = incomeSum - expenseSum;
       const kpiBalance = document.getElementById('kpi-balance');
       
@@ -1007,7 +988,6 @@
       document.getElementById('kpi-income').textContent = formatBRL(incomeSum);
       document.getElementById('kpi-expenses').textContent = formatBRL(expenseSum);
 
-      // Renderização da lista de Contas
       const accountsList = document.getElementById('dashboard-accounts-list');
       if (accountsList) {
          accountsList.innerHTML = '';
@@ -1033,11 +1013,9 @@
          });
       }
 
-      // Renderização da Atividade Recente
       const activityList = document.getElementById('dashboard-activity-list');
       if (activityList) {
          activityList.innerHTML = '';
-         
          const lastTransactions = [...state.transactions].sort((a,b) => new Date(b.date) - new Date(a.date)).slice(0, 10);
          
          if (lastTransactions.length === 0) {
@@ -1073,7 +1051,6 @@
       if (typeof lucide !== 'undefined') lucide.createIcons();
     }
 
-    // Render: Histórico completo
     function renderHistory() {
       const container = document.getElementById('history-list');
       if (!container) return;
@@ -1102,6 +1079,8 @@
          const isIncome = t.type === 'income';
          const formattedDate = t.date ? formatDate(t.date) : '';
          const div = document.createElement('div');
+         
+         // Custom layout: Left (Description, Category, Account), Right (Installment Indicator dynamically placed at left of Date/Amount container as requested in image_4f2e5d.png)
          div.className = "bg-card-dark p-4 rounded-2xl flex justify-between items-center gap-4 hover:bg-slate-900/60 transition-all cursor-pointer";
          div.innerHTML = `
             <div class="flex items-center gap-3 flex-1 min-w-0">
@@ -1109,26 +1088,26 @@
                <div class="p-3 rounded-xl ${isIncome ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400'} shrink-0">
                   <i data-lucide="${isIncome ? 'trending-up' : 'trending-down'}" class="w-4 h-4"></i>
                </div>
-               
-               <!-- VALOR ALINHADO À DIREITA DO ÍCONE E ANTES DA DESCRIÇÃO -->
-               <div class="text-sm font-black whitespace-nowrap ${isIncome ? 'text-green-accent' : 'text-red-accent'} shrink-0 select-none">
-                  ${isIncome ? '+' : '-'} ${formatBRL(t.displayAmount)}
-               </div>
 
                <!-- DESCRIÇÃO E DETALHES -->
                <div class="min-w-0 flex-1">
                   <p class="text-xs font-bold text-white uppercase truncate">${t.description}</p>
                   <div class="flex flex-wrap items-center gap-1.5 mt-1 text-[9px] font-black text-slate-550">
-                     <!-- TAG DE CATEGORIA ORIGINAL REVERTIDA DO VERDE/VERMELHO -->
                      <span class="bg-slate-900/80 px-1.5 py-0.5 rounded text-slate-400 border border-slate-800">${t.category}</span>
-                     ${t.installmentLabel ? `<span class="bg-blue-500/10 text-blue-400 px-1.5 py-0.5 rounded">Parc ${t.installmentLabel}</span>` : ''}
                      <span class="uppercase">${t.cardUsed || 'Sem Conta'}</span>
                   </div>
                </div>
             </div>
-            <!-- DATA POSICIONADA NO FINAL (DIREITA) COM DESTAQUE VERMELHO OU VERDE -->
-            <div class="shrink-0 text-right">
-               ${formattedDate ? `<span class="px-2.5 py-1 rounded text-[10px] font-black border ${isIncome ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-rose-500/10 text-rose-400 border-rose-500/20'}">${formattedDate}</span>` : ''}
+            
+            <!-- DATA, PARCELA E VALOR NA DIREITA (PARCELA ADICIONADA À ESQUERDA DO BLOCO CONFORME image_4f2e5d.png) -->
+            <div class="shrink-0 flex items-center gap-3">
+               ${t.installmentLabel ? `<span class="bg-blue-500/15 text-blue-400 px-2 py-1 rounded text-[9px] font-black whitespace-nowrap">Parc ${t.installmentLabel}</span>` : ''}
+               <div class="shrink-0 flex flex-col items-end gap-1.5 text-right">
+                  ${formattedDate ? `<span class="text-[10px] font-black text-slate-400 uppercase">${formattedDate}</span>` : ''}
+                  <div class="text-sm font-black whitespace-nowrap ${isIncome ? 'text-green-accent' : 'text-red-accent'} select-none">
+                     ${isIncome ? '+' : '-'} ${formatBRL(t.displayAmount)}
+                  </div>
+               </div>
             </div>
          `;
          div.onclick = () => showTransactionOptions(t);
@@ -1138,7 +1117,6 @@
       if (typeof lucide !== 'undefined') lucide.createIcons();
     }
 
-    // Render: Lista Dinâmica de Meses no Histórico (Apenas os meses com lançamentos ativos)
     function renderMonthsScroll() {
        const container = document.getElementById('history-months-scroll');
        if (!container) return;
@@ -1152,7 +1130,6 @@
           }
        });
 
-       // Caso não exista nenhuma transação cadastrada, insere o mês atual como fallback de segurança
        if (monthsSet.size === 0) {
           const base = new Date();
           monthsSet.add(`${String(base.getMonth()+1).padStart(2,'0')}/${base.getFullYear()}`);
@@ -1164,7 +1141,6 @@
           return yA !== yB ? yA - yB : mA - mB;
        });
 
-       // Se o mês previamente selecionado não estiver nos meses com transações, escolhe o mais recente
        if (!sorted.includes(state.selectedMonth)) {
           state.selectedMonth = sorted[sorted.length - 1];
        }
@@ -1178,7 +1154,6 @@
        });
     }
 
-    // Render: Categorias do Ajustes
     function renderFidCategories() {
        const container = document.getElementById('categories-manager-list');
        if (!container) return;
@@ -1211,7 +1186,6 @@
        if (typeof lucide !== 'undefined') lucide.createIcons();
     }
 
-    // Render: Contas do Ajustes
     function renderFidCards() {
        const container = document.getElementById('cards-manager-list');
        if (!container) return;
@@ -1244,7 +1218,6 @@
        if (typeof lucide !== 'undefined') lucide.createIcons();
     }
 
-    // Popula dropdowns estáticos
     function populateFormSelects() {
        const monthSel = document.getElementById('transaction-month');
        if (!monthSel) return;
@@ -1260,7 +1233,6 @@
           monthSel.appendChild(opt);
        }
 
-       // Categorias
        const catSel = document.getElementById('transaction-category');
        catSel.innerHTML = '<option value="" disabled selected>Selecione</option>';
        state.customCategories.filter(c => c.type === state.activeType).forEach(c => {
@@ -1270,7 +1242,6 @@
           catSel.appendChild(opt);
        });
 
-       // Contas
        const cardSel = document.getElementById('transaction-card');
        cardSel.innerHTML = '<option value="">Sem Conta / Geral</option>';
        state.customCards.forEach(c => {
@@ -1280,7 +1251,6 @@
           cardSel.appendChild(opt);
        });
 
-       // Métodos
        const methodSel = document.getElementById('transaction-method');
        methodSel.innerHTML = '';
        state.customMethods.forEach(m => {
@@ -1291,7 +1261,6 @@
        });
     }
 
-    // Render: Chips de categoria no Histórico
     function renderHistoryFilterChips() {
        const container = document.getElementById('history-category-filters');
        if (!container) return;
@@ -1313,7 +1282,6 @@
        });
     }
 
-    // Render Geral Inteligente
     function renderAll() {
        syncStateFromLocal();
        if (state.activeTab === 'dashboard') {
@@ -1327,7 +1295,6 @@
        }
     }
 
-    // Menu de Ações de Transação
     function showTransactionOptions(t) {
        const modal = document.getElementById('transaction-options-modal');
        modal.classList.remove('hidden');
@@ -1372,10 +1339,13 @@
     function triggerEditTransaction(t) {
        document.getElementById('edit-trans-id').value = t.id;
        document.getElementById('edit-trans-type').value = t.type;
+       document.getElementById('edit-trans-installments-count').value = t.installmentsCount || 1;
        document.getElementById('edit-trans-desc').value = t.description;
        
-       // Aplica formatação de Real para a edição do input com máscara
-       document.getElementById('edit-trans-amount').value = t.amount.toLocaleString('pt-BR', {
+       // Exibe o valor da parcela individual se for parcelado (com base no displayAmount), senão mostra o valor total.
+       const amountToDisplay = t.displayAmount !== undefined ? t.displayAmount : t.amount;
+       
+       document.getElementById('edit-trans-amount').value = amountToDisplay.toLocaleString('pt-BR', {
           minimumFractionDigits: 2,
           maximumFractionDigits: 2
        });
@@ -1428,7 +1398,6 @@
        document.getElementById('edit-transaction-modal').classList.remove('hidden');
     }
 
-    // Evento Form Lançamentos
     document.getElementById('transaction-form').onsubmit = async (e) => {
        e.preventDefault();
        const amt = parseBRLFloat(document.getElementById('transaction-amount').value);
@@ -1459,15 +1428,19 @@
        });
 
        showToast("Registro salvo com sucesso!", "success");
+       
+       // Limpeza total do formulário e redefinições de estado (Prestações -> Não)
        document.getElementById('transaction-form').reset();
+       document.getElementById('transaction-amount').value = ''; 
+       document.getElementById('btn-installment-no').click(); 
        document.getElementById('transaction-date').value = new Date().toISOString().split('T')[0];
+       
        state.activeTab = 'dashboard';
        document.querySelectorAll('.nav-tab-btn').forEach(b => {
           if (b.dataset.tab === 'dashboard') b.click();
        });
     };
 
-    // Form Edição Lançamento
     document.getElementById('form-edit-transaction').onsubmit = async (e) => {
        e.preventDefault();
        const id = document.getElementById('edit-trans-id').value;
@@ -1478,10 +1451,14 @@
        const month = document.getElementById('edit-trans-month').value;
        const method = document.getElementById('edit-trans-method').value;
        const card = document.getElementById('edit-trans-card').value;
+       const installmentsCount = parseInt(document.getElementById('edit-trans-installments-count').value) || 1;
+
+       // O total geral é calculado multiplicando o valor editado da parcela pelo total de parcelas
+       const totalAmt = amt * installmentsCount;
 
        await DB.updateDoc(`transactions_${LOCAL_KEY}`, id, {
           description: desc,
-          amount: amt,
+          amount: totalAmt,
           category: cat,
           date: dateVal,
           billingMonth: month,
@@ -1493,12 +1470,11 @@
        showToast("Registro atualizado com sucesso!", "success");
     };
 
-    // Forms Ajustes (ATUALIZADO SEM SALDO INICIAL)
     document.getElementById('form-add-card').onsubmit = async (e) => {
        e.preventDefault();
        const name = document.getElementById('new-card-name').value.trim();
        const details = document.getElementById('new-card-details').value.trim();
-       const initial = 0; // Saldo inicial padronizado de forma dinâmica para 0
+       const initial = 0; 
 
        await DB.addDoc(`cards_${LOCAL_KEY}`, { name, details, initial });
        document.getElementById('form-add-card').reset();
@@ -1510,7 +1486,7 @@
        e.preventDefault();
        const name = document.getElementById('new-category-name').value.trim();
        const type = document.getElementById('new-category-type').value;
-       const budget = 0; // Removida a necessidade de input físico
+       const budget = 0; 
 
        await DB.addDoc(`categories_${LOCAL_KEY}`, { name, type, budget });
        document.getElementById('form-add-category').reset();
@@ -1518,7 +1494,6 @@
        renderFidCategories();
     };
 
-    // Seletores de Tipo (Despesa / Receita) no Form
     document.getElementById('btn-type-expense').onclick = () => {
        state.activeType = 'expense';
        document.getElementById('btn-type-expense').className = "px-4 py-2 rounded-lg text-xs font-black uppercase tracking-wider bg-rose-600 text-white";
@@ -1543,22 +1518,20 @@
        populateFormSelects();
     };
 
-    // Triggers parcelas
     document.getElementById('btn-installment-no').onclick = () => {
        state.isInstallment = false;
        document.getElementById('btn-installment-no').className = "px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-800 text-white";
-       document.getElementById('btn-installment-yes').className = "px-3 py-1.5 rounded-lg text-xs font-bold text-slate-500 hover:text-white";
+       document.getElementById('btn-installment-yes').className = "px-3 py-1.5 rounded-lg text-xs font-bold text-slate-550 hover:text-white";
        document.getElementById('installment-qty-box').classList.add('hidden');
     };
 
     document.getElementById('btn-installment-yes').onclick = () => {
        state.isInstallment = true;
        document.getElementById('btn-installment-yes').className = "px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-800 text-white";
-       document.getElementById('btn-installment-no').className = "px-3 py-1.5 rounded-lg text-xs font-bold text-slate-500 hover:text-white";
+       document.getElementById('btn-installment-no').className = "px-3 py-1.5 rounded-lg text-xs font-bold text-slate-550 hover:text-white";
        document.getElementById('installment-qty-box').classList.remove('hidden');
     };
 
-    // Navegação de Abas Principal (Desktop/Mobile - Mantendo responsividade)
     document.querySelectorAll('.nav-tab-btn').forEach(btn => {
        btn.onclick = () => {
           const tab = btn.dataset.tab;
@@ -1576,7 +1549,6 @@
        };
     });
 
-    // Sub-abas Ajustes (E fix do botão "+ Nova" para trocar a aba ativa para Ajustes -> Contas)
     window.openAjustesModal = function(subTab) {
        const settingsTabBtn = document.querySelector('.nav-tab-btn[data-tab="settings"]');
        if (settingsTabBtn) {
@@ -1609,7 +1581,6 @@
     document.getElementById('settings-tab-categories').onclick = () => openAjustesModal('categories');
     document.getElementById('settings-tab-sync').onclick = () => openAjustesModal('sync');
 
-    // Sincronização Cloud Event Triggers
     document.getElementById('btn-save-fb').onclick = () => {
        const input = document.getElementById('firebase-config-input').value.trim();
        try {
@@ -1629,7 +1600,6 @@
        initFirebase();
     };
 
-    // Histórico de busca triggers e Filtros com Cores Novas baseadas na Imagem
     document.getElementById('filter-all').onclick = () => {
        state.filterType = 'all';
        document.getElementById('filter-all').className = "px-4 py-2 rounded-lg font-bold bg-slate-800 text-white";
@@ -1679,7 +1649,6 @@
        document.getElementById('cloud-couple-code').value = code;
     };
 
-    // Backups locais
     document.getElementById('btn-export-backup').onclick = () => {
        const data = {
           transactions: state.transactions,
@@ -1728,7 +1697,6 @@
        });
     };
 
-    // Extrato de lançamentos
     function handleViewStatement() {
        const list = expandedTransactions().filter(t => t.displayMonth === state.selectedMonth);
        if (list.length === 0) {
@@ -1797,7 +1765,6 @@
     document.getElementById('btn-close-statement').onclick = () => document.getElementById('statement-modal').classList.add('hidden');
     document.getElementById('btn-print-action').onclick = () => window.print();
 
-    // Histórico de busca triggers
     document.getElementById('search-trans-input').oninput = (e) => {
        state.searchQuery = e.target.value.toLowerCase().trim();
        renderHistory();
@@ -1813,11 +1780,7 @@
        if (code) state.sharingCode = code;
        
        document.getElementById('transaction-date').value = new Date().toISOString().split('T')[0];
-       
-       // Configura as máscaras nos inputs
        setupCurrencyMasks();
-
-       // Aba ativa por padrão (Dashboard)
        document.querySelectorAll('.nav-tab-btn')[0].click();
     }
 
