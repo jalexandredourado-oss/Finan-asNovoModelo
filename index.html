@@ -313,8 +313,7 @@
       <section id="tab-form" class="tab-content hidden max-w-xl mx-auto space-y-6 animate-in zoom-in-95 duration-200">
         
         <div class="bg-card-dark p-6 rounded-3xl">
-          <div class="flex items-center justify-between mb-6">
-            <h2 class="text-lg font-black text-white uppercase tracking-wider">Novo Lançamento</h2>
+          <div class="flex items-center justify-end mb-6">
             <div class="flex bg-slate-900/80 p-1 rounded-xl border border-slate-800 select-none">
               <button id="btn-type-expense" class="px-4 py-2 rounded-lg text-xs font-black uppercase tracking-wider bg-rose-600 text-white transition-all">Despesa</button>
               <button id="btn-type-income" class="px-4 py-2 rounded-lg text-xs font-black uppercase tracking-wider text-slate-400 hover:text-white transition-all">Receita</button>
@@ -782,15 +781,14 @@
       }
 
       const methodKey = `methods_${LOCAL_KEY}`;
-      if (getLocalCollection(methodKey).length === 0) {
-        const defaultMethods = [
-          { id: crypto.randomUUID(), name: "Pix" },
-          { id: crypto.randomUUID(), name: "Dinheiro" },
-          { id: crypto.randomUUID(), name: "Cartão de Débito" },
-          { id: crypto.randomUUID(), name: "Cartão de Crédito" }
-        ];
-        localStorage.setItem(methodKey, JSON.stringify(defaultMethods));
-      }
+      // Define as formas de pagamento conforme solicitado
+      const defaultMethods = [
+          { id: crypto.randomUUID(), name: "DINHEIRO" },
+          { id: crypto.randomUUID(), name: "DÉBITO" },
+          { id: crypto.randomUUID(), name: "PIX" },
+          { id: crypto.randomUUID(), name: "CRÉDITO" }
+      ];
+      localStorage.setItem(methodKey, JSON.stringify(defaultMethods));
     }
 
     const DB = {
