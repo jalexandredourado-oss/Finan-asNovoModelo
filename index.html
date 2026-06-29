@@ -224,12 +224,12 @@
           <div class="bg-card-dark p-6 rounded-3xl flex flex-col justify-between min-h-[140px] relative overflow-hidden">
             <div class="absolute top-0 right-0 w-32 h-32 blur-[80px] -mr-16 -mt-16 bg-blue-500/10"></div>
             <div>
-              <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Saldo Geral Consolidado</p>
+              <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Saldo Geral do M&ecirc;s</p>
               <h2 id="kpi-balance" class="text-3xl font-extrabold text-white">R$ 0,00</h2>
             </div>
             <div class="flex items-center gap-1 text-[11px] text-emerald-400 font-bold mt-4">
               <i data-lucide="git-merge" class="w-3.5 h-3.5"></i>
-              <span>Receitas subtraídas de despesas</span>
+              <span>Receitas menos despesas do m&ecirc;s</span>
             </div>
           </div>
 
@@ -242,7 +242,7 @@
             </div>
             <div class="flex items-center gap-1 text-[11px] text-emerald-500/80 font-bold mt-4">
               <i data-lucide="trending-up" class="w-3.5 h-3.5"></i>
-              <span>Ganhos acumulados registrados</span>
+              <span>Receitas do m&ecirc;s selecionado</span>
             </div>
           </div>
 
@@ -255,7 +255,7 @@
             </div>
             <div class="flex items-center gap-1 text-[11px] text-red-accent/80 font-bold mt-4">
               <i data-lucide="trending-down" class="w-3.5 h-3.5"></i>
-              <span>Gastos acumulados registrados</span>
+              <span>Despesas do m&ecirc;s selecionado</span>
             </div>
           </div>
 
@@ -690,6 +690,27 @@
        return dateStr;
     }
 
+    function isExpensePaid(t) {
+       if (t.type !== 'expense') return true;
+       const monthKey = t.displayMonth || t.billingMonth;
+       if (t.paidMonths && Object.prototype.hasOwnProperty.call(t.paidMonths, monthKey)) {
+          return t.paidMonths[monthKey] === true;
+       }
+       return t.paid === true;
+    }
+
+    async function toggleExpensePaid(t, paid) {
+       const original = state.transactions.find(item => item.id === t.id);
+       if (!original) return;
+
+       const monthKey = t.displayMonth || t.billingMonth;
+       const paidMonths = { ...(original.paidMonths || {}) };
+       paidMonths[monthKey] = paid;
+
+       await DB.updateDoc(`transactions_${LOCAL_KEY}`, t.id, { paidMonths });
+       showToast(paid ? "Despesa marcada como paga!" : "Despesa marcada como nao paga!", paid ? "success" : "info");
+    }
+
     function setupCurrencyMasks() {
        const inputs = [
           document.getElementById('transaction-amount'),
@@ -944,12 +965,14 @@
         cardBalances[c.name] = parseFloat(c.initial) || 0;
       });
 
-      state.transactions.forEach(t => {
+      expandedTransactions().forEach(t => {
         if (t.cardUsed && cardBalances[t.cardUsed] !== undefined) {
           if (t.type === 'income') {
-            cardBalances[t.cardUsed] += t.amount;
+            cardBalances[t.cardUsed] += t.displayAmount;
           } else {
-            cardBalances[t.cardUsed] -= t.amount;
+            if (isExpensePaid(t)) {
+              cardBalances[t.cardUsed] -= t.displayAmount;
+            }
           }
         }
       });
@@ -961,93 +984,104 @@
     }
 
     function renderDashboard() {
-      const { cardBalances } = calculateBalances();
-      
-      let incomeSum = 0;
-      let expenseSum = 0;
-      expandedTransactions().forEach(t => {
-        if (t.type === 'income') incomeSum += t.displayAmount;
-        else expenseSum += t.displayAmount;
-      });
+  const { cardBalances } = calculateBalances();
+  
+  let incomeSum = 0;
+  let totalExpenseSum = 0;
+  let unpaidExpenseSum = 0;
 
-      const netBalance = incomeSum - expenseSum;
-      const kpiBalance = document.getElementById('kpi-balance');
-      
-      if (kpiBalance) {
-         kpiBalance.textContent = formatBRL(netBalance);
-         kpiBalance.classList.remove('text-white', 'text-red-accent');
-         if (netBalance < 0) {
-            kpiBalance.classList.add('text-red-accent');
-         } else {
-            kpiBalance.classList.add('text-white');
-         }
+  const monthlyTransactions = expandedTransactions().filter(t => t.displayMonth === state.selectedMonth);
+  monthlyTransactions.forEach(t => {
+    if (t.type === 'income') {
+      incomeSum += t.displayAmount;
+    } else {
+      totalExpenseSum += t.displayAmount; // guarda o total pra referência
+      if (!isExpensePaid(t)) {
+        unpaidExpenseSum += t.displayAmount; // só não pagas
       }
-
-      document.getElementById('kpi-income').textContent = formatBRL(incomeSum);
-      document.getElementById('kpi-expenses').textContent = formatBRL(expenseSum);
-
-      const accountsList = document.getElementById('dashboard-accounts-list');
-      if (accountsList) {
-         accountsList.innerHTML = '';
-         state.customCards.forEach(c => {
-            const current = cardBalances[c.name] || 0;
-            const isNegative = current < 0;
-            
-            const div = document.createElement('div');
-            div.className = "bg-slate-900/40 p-4 rounded-2xl border border-slate-800/70 flex justify-between items-center";
-            div.innerHTML = `
-               <div class="flex items-center gap-3">
-                 <div class="p-2.5 rounded-xl bg-slate-800 text-slate-400">
-                   <i data-lucide="building-2" class="w-4 h-4"></i>
-                 </div>
-                 <div>
-                   <p class="text-xs font-bold text-white uppercase">${c.name}</p>
-                   <p class="text-[9px] text-slate-550 font-extrabold uppercase mt-0.5">${c.details || 'NÃO DEFINIDA'}</p>
-                 </div>
-               </div>
-               <span class="text-xs font-black ${isNegative ? 'text-red-accent' : 'text-green-accent'}">${formatBRL(current)}</span>
-            `;
-            accountsList.appendChild(div);
-         });
-      }
-
-      const activityList = document.getElementById('dashboard-activity-list');
-      if (activityList) {
-         activityList.innerHTML = '';
-         const lastTransactions = [...state.transactions].sort((a,b) => new Date(b.date) - new Date(a.date)).slice(0, 10);
-         
-         if (lastTransactions.length === 0) {
-            activityList.innerHTML = `
-               <tr>
-                 <td colspan="4" class="py-10 text-center text-[10px] uppercase font-black text-slate-600 italic">Sem lançamentos registrados</td>
-               </tr>
-            `;
-         } else {
-            lastTransactions.forEach(t => {
-               const isIncome = t.type === 'income';
-               const tr = document.createElement('tr');
-               tr.className = "hover:bg-slate-900/30 cursor-pointer transition-all";
-               tr.innerHTML = `
-                 <td class="py-3 px-2 text-xs font-bold text-white uppercase">${t.description}</td>
-                 <td class="py-3 px-2 text-[10px] font-black text-slate-400 uppercase">
-                   <span class="flex items-center gap-1">
-                      <i data-lucide="wallet" class="w-3.5 h-3.5 text-slate-500"></i>
-                      ${t.cardUsed || 'Nenhuma'}
-                   </span>
-                 </td>
-                 <td class="py-3 px-2">
-                   <span class="px-2 py-0.5 rounded text-[8px] font-black uppercase ${isIncome ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400'}">${isIncome ? 'Receita' : 'Despesa'}</span>
-                 </td>
-                 <td class="py-3 px-2 text-right text-xs font-black ${isIncome ? 'text-green-accent' : 'text-red-accent'}">${isIncome ? '+' : '-'} ${formatBRL(t.amount)}</td>
-               `;
-               tr.onclick = () => showTransactionOptions(t);
-               activityList.appendChild(tr);
-            });
-         }
-      }
-
-      if (typeof lucide !== 'undefined') lucide.createIcons();
     }
+  });
+
+  // CORRIGIDO: Saldo Geral = Receitas - Despesas em Aberto
+  const netBalance = incomeSum - unpaidExpenseSum;
+  
+  const kpiBalance = document.getElementById('kpi-balance');
+  
+  if (kpiBalance) {
+     kpiBalance.textContent = formatBRL(netBalance);
+     kpiBalance.classList.remove('text-white', 'text-red-accent');
+     if (netBalance < 0) {
+        kpiBalance.classList.add('text-red-accent');
+     } else {
+        kpiBalance.classList.add('text-white');
+     }
+  }
+
+  document.getElementById('kpi-income').textContent = formatBRL(incomeSum);
+  document.getElementById('kpi-expenses').textContent = formatBRL(unpaidExpenseSum);
+
+  const accountsList = document.getElementById('dashboard-accounts-list');
+  if (accountsList) {
+     accountsList.innerHTML = '';
+     state.customCards.forEach(c => {
+        const current = cardBalances[c.name] || 0;
+        const isNegative = current < 0;
+        
+        const div = document.createElement('div');
+        div.className = "bg-slate-900/40 p-4 rounded-2xl border border-slate-800/70 flex justify-between items-center";
+        div.innerHTML = `
+           <div class="flex items-center gap-3">
+             <div class="p-2.5 rounded-xl bg-slate-800 text-slate-400">
+               <i data-lucide="building-2" class="w-4 h-4"></i>
+             </div>
+             <div>
+               <p class="text-xs font-bold text-white uppercase">${c.name}</p>
+               <p class="text- text-slate-550 font-extrabold uppercase mt-0.5">${c.details || 'NÃO DEFINIDA'}</p>
+             </div>
+           </div>
+           <span class="text-xs font-black ${isNegative ? 'text-red-accent' : 'text-green-accent'}">${formatBRL(current)}</span>
+        `;
+        accountsList.appendChild(div);
+     });
+  }
+
+  const activityList = document.getElementById('dashboard-activity-list');
+  if (activityList) {
+     activityList.innerHTML = '';
+     const lastTransactions = [...state.transactions].sort((a,b) => new Date(b.date) - new Date(a.date)).slice(0, 10);
+     
+     if (lastTransactions.length === 0) {
+        activityList.innerHTML = `
+           <tr>
+             <td colspan="4" class="py-10 text-center text- uppercase font-black text-slate-600 italic">Sem lançamentos registrados</td>
+           </tr>
+        `;
+     } else {
+        lastTransactions.forEach(t => {
+           const isIncome = t.type === 'income';
+           const tr = document.createElement('tr');
+           tr.className = "hover:bg-slate-900/30 cursor-pointer transition-all";
+           tr.innerHTML = `
+             <td class="py-3 px-2 text-xs font-bold text-white uppercase">${t.description}</td>
+             <td class="py-3 px-2 text- font-black text-slate-400 uppercase">
+               <span class="flex items-center gap-1">
+                  <i data-lucide="wallet" class="w-3.5 h-3.5 text-slate-500"></i>
+                  ${t.cardUsed || 'Nenhuma'}
+               </span>
+             </td>
+             <td class="py-3 px-2">
+               <span class="px-2 py-0.5 rounded text- font-black uppercase ${isIncome ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400'}">${isIncome ? 'Receita' : 'Despesa'}</span>
+             </td>
+             <td class="py-3 px-2 text-right text-xs font-black ${isIncome ? 'text-green-accent' : 'text-red-accent'}">${isIncome ? '+' : '-'} ${formatBRL(t.amount)}</td>
+           `;
+           tr.onclick = () => showTransactionOptions(t);
+           activityList.appendChild(tr);
+        });
+     }
+  }
+
+  if (typeof lucide !== 'undefined') lucide.createIcons();
+}
 
     function renderHistory() {
       const container = document.getElementById('history-list');
@@ -1075,6 +1109,7 @@
 
       list.forEach(t => {
          const isIncome = t.type === 'income';
+         const isPaid = isExpensePaid(t);
          const formattedDate = t.date ? formatDate(t.date) : '';
          const div = document.createElement('div');
          
@@ -1099,16 +1134,24 @@
             
             <!-- DATA, PARCELA E VALOR NA DIREITA (PARCELA ADICIONADA À ESQUERDA DO BLOCO CONFORME image_4f2e5d.png) -->
             <div class="shrink-0 flex items-center gap-3">
+               ${!isIncome ? `<button type="button" class="payment-toggle px-3 py-2 rounded-xl text-[9px] font-black uppercase border transition-all ${isPaid ? 'bg-emerald-600 text-slate-950 border-emerald-500' : 'bg-slate-900 text-slate-400 border-slate-700 hover:text-white'}" title="${isPaid ? 'Marcar como nao pago' : 'Marcar como pago'}">${isPaid ? 'Pago' : 'Pagar'}</button>` : ''}
                ${t.installmentLabel ? `<span class="bg-blue-500/15 text-blue-400 px-2 py-1 rounded text-[9px] font-black whitespace-nowrap">Parc ${t.installmentLabel}</span>` : ''}
                <div class="shrink-0 flex flex-col items-end gap-1.5 text-right">
                   ${formattedDate ? `<span class="text-[10px] font-black text-slate-400 uppercase">${formattedDate}</span>` : ''}
-                  <div class="text-sm font-black whitespace-nowrap ${isIncome ? 'text-green-accent' : 'text-red-accent'} select-none">
-                     ${isIncome ? '+' : '-'} ${formatBRL(t.displayAmount)}
-                  </div>
+                  <div class="text-sm font-black whitespace-nowrap ${isIncome || isPaid ? 'text-green-accent' : 'text-red-accent'} select-none">
+   ${isIncome || isPaid ? '+' : '-'} ${formatBRL(t.displayAmount)}
+</div>
                </div>
             </div>
          `;
          div.onclick = () => showTransactionOptions(t);
+         const paymentToggle = div.querySelector('.payment-toggle');
+         if (paymentToggle) {
+            paymentToggle.onclick = (event) => {
+               event.stopPropagation();
+               toggleExpensePaid(t, !isPaid);
+            };
+         }
          container.appendChild(div);
       });
 
