@@ -20,6 +20,9 @@
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
   
+  <!-- Chart.js para o Gráfico de Pizza -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -57,7 +60,6 @@
       color: #f43f5e !important;
     }
 
-    /* Configuração de inputs consistentes para telemóveis */
     input:not(.bg-transparent), select, textarea {
       background-color: #060a12 !important;
       color: #f8fafc !important;
@@ -66,7 +68,6 @@
       appearance: none !important;
     }
 
-    /* Remove bordas, sombras e sobras do input de valor premium */
     input.bg-transparent {
       background: transparent !important;
       border: none !important;
@@ -100,7 +101,6 @@
       transition: all 1s ease-in-out;
     }
 
-    /* Estilos de Impressão */
     @media print {
       body * {
         visibility: hidden;
@@ -130,18 +130,13 @@
   <div id="splash-screen" class="fixed inset-0 bg-panel-dark z-[300] flex flex-col items-center justify-center transition-all duration-700 ease-in-out">
     <div class="relative flex flex-col items-center gap-6">
       <div class="absolute w-48 h-48 bg-emerald-500/20 blur-[60px] rounded-full -top-10"></div>
-      
-      <!-- Logo Animado -->
       <div class="bg-gradient-to-tr from-emerald-500 to-teal-600 p-5 rounded-3xl shadow-2xl shadow-emerald-950/40 relative animate-pulse">
         <i data-lucide="wallet" class="text-white w-12 h-12"></i>
       </div>
-      
-      <!-- Branding -->
       <div class="text-center space-y-1.5 relative">
         <h1 class="font-black text-3xl uppercase tracking-widest text-white leading-tight">FinançasPro</h1>
         <p class="text-[9px] text-slate-550 font-extrabold uppercase tracking-[0.25em]">O seu controle inteligente</p>
       </div>
-      
       <div class="w-6 h-6 border-2 border-slate-800 border-t-emerald-500 rounded-full animate-spin mt-4"></div>
     </div>
   </div>
@@ -172,7 +167,6 @@
   <!-- MAIN APP CONTAINER -->
   <div id="app-screen" class="w-full max-w-6xl min-h-screen flex flex-col bg-panel-dark px-3 md:px-8 py-6 z-10">
     
-    <!-- Cabeçalho Principal -->
     <header class="flex flex-col lg:flex-row justify-between items-stretch lg:items-center gap-4 pb-6 border-b border-slate-850 no-print">
       <div class="flex items-center gap-3">
         <div class="bg-emerald-500 p-3 rounded-2xl shadow-lg shadow-emerald-500/20">
@@ -190,7 +184,6 @@
         </div>
       </div>
       
-      <!-- Navegação Superior Adaptável (Menu compacto no telemóvel) -->
       <nav class="flex items-center justify-between sm:justify-start gap-1 sm:gap-2 bg-card-dark p-1 rounded-2xl border border-slate-800 w-full sm:w-auto">
         <button data-tab="dashboard" class="nav-tab-btn flex-1 sm:flex-initial flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 px-1.5 py-2 sm:px-4 sm:py-2.5 rounded-xl transition-all text-[10px] sm:text-xs font-bold text-slate-400 hover:text-white">
           <i data-lucide="pie-chart" class="w-4 h-4"></i>
@@ -211,7 +204,6 @@
       </nav>
     </header>
 
-    <!-- CONTEÚDO PRINCIPAL (DIFERENTES ABAS) -->
     <main class="flex-1 py-6 no-print">
 
       <!-- ABA 1: PAINEL -->
@@ -219,8 +211,6 @@
         
         <!-- Cartões de Resumos de Saldo -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-          
-          <!-- Card Saldo Consolidado -->
           <div class="bg-card-dark p-6 rounded-3xl flex flex-col justify-between min-h-[140px] relative overflow-hidden">
             <div class="absolute top-0 right-0 w-32 h-32 blur-[80px] -mr-16 -mt-16 bg-blue-500/10"></div>
             <div>
@@ -233,89 +223,68 @@
             </div>
           </div>
 
-          <!-- Card Total Receitas -->
           <div id="card-kpi-income" class="bg-card-dark rounded-3xl p-5 cursor-pointer hover:bg-slate-900/60 transition-all active:scale-95">
-  <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Total de Receitas</p>
-  <div id="kpi-income" class="text-2xl font-black text-green-accent leading-none">R$ 0,00</div>
-  <div class="text-[9px] font-extrabold text-slate-550 uppercase tracking-wider mt-3 flex items-center gap-1.5">
-    <i data-lucide="trending-up" class="w-3 h-3 text-green-accent"></i>
-    <span>Receitas do mês selecionado</span>
-  </div>
-</div>
-
-          <!-- Card Total Despesas -->
-          <div id="card-kpi-expenses" class="bg-card-dark rounded-3xl p-5 cursor-pointer hover:bg-slate-900/60 transition-all active:scale-95">
-  <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Total de Despesas</p>
-  <div id="kpi-expenses" class="text-2xl font-black text-red-accent leading-none">R$ 0,00</div>
-  <div class="text-[9px] font-extrabold text-slate-550 uppercase tracking-wider mt-3 flex items-center gap-1.5">
-    <i data-lucide="trending-down" class="w-3 h-3 text-red-accent"></i>
-    <span>Despesas do mês selecionado</span>
-  </div>
-</div>
-
-        </div>
-
-        <!-- Seção Inferior: Minhas Contas & Atividade Recente -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          
-          <!-- Coluna Esquerda: Minhas Contas -->
-          <div class="bg-card-dark p-6 rounded-3xl flex flex-col h-full min-h-[350px]">
-            <div class="flex justify-between items-center mb-6">
-              <h3 class="text-sm font-black text-white uppercase tracking-wider">Minhas Contas</h3>
-              <button onclick="window.openAjustesModal('cards')" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl text-xs font-bold border border-slate-700 flex items-center gap-1 transition-all">
-                <i data-lucide="plus" class="w-3.5 h-3.5"></i> Nova
-              </button>
-            </div>
-            
-            <div id="dashboard-accounts-list" class="space-y-3 flex-1 overflow-y-auto max-h-[380px] pr-1">
-              <!-- Renderizado Dinamicamente -->
+            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Total de Receitas</p>
+            <div id="kpi-income" class="text-2xl font-black text-green-accent leading-none">R$ 0,00</div>
+            <div class="text-[9px] font-extrabold text-slate-550 uppercase tracking-wider mt-3 flex items-center gap-1.5">
+              <i data-lucide="trending-up" class="w-3 h-3 text-green-accent"></i>
+              <span>Receitas do mês selecionado</span>
             </div>
           </div>
 
-          <!-- Coluna Direita: Atividade Recente -->
+          <div id="card-kpi-expenses" class="bg-card-dark rounded-3xl p-5 cursor-pointer hover:bg-slate-900/60 transition-all active:scale-95">
+            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Total de Despesas</p>
+            <div id="kpi-expenses" class="text-2xl font-black text-red-accent leading-none">R$ 0,00</div>
+            <div class="text-[9px] font-extrabold text-slate-550 uppercase tracking-wider mt-3 flex items-center gap-1.5">
+              <i data-lucide="trending-down" class="w-3 h-3 text-red-accent"></i>
+              <span>Despesas do mês selecionado</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Seção Inferior: Gráfico, Contas & Atividade -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          
+          <!-- Coluna Esquerda: Gráfico Pizza + Carteiras -->
+          <div class="flex flex-col gap-6 lg:col-span-1">
+            
+            <!-- Gráfico de Valores Totais (Histórico Completo) -->
+            <div class="bg-card-dark p-6 rounded-3xl flex flex-col items-center h-full min-h-[350px]">
+              <h3 class="text-sm font-black text-white uppercase tracking-wider mb-6 w-full text-left">Balanço Histórico</h3>
+              <div class="w-full flex-1 relative min-h-[250px]">
+                 <canvas id="totalPieChart"></canvas>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Coluna Direita: Minhas Economias (Atividade Recente) -->
           <div class="bg-card-dark p-6 rounded-3xl lg:col-span-2 flex flex-col h-full min-h-[350px]">
             <div class="flex justify-between items-center mb-6">
-
-
-<h3 class="text-sm font-black text-white uppercase tracking-wider">Minhas Parcelas</h3>
+              <h3 class="text-sm font-black text-white uppercase tracking-wider">Minhas Economias</h3>
               <button id="btn-dashboard-view-statement" class="p-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl transition-all" title="Ver Extrato Geral">
                 <i data-lucide="file-text" class="w-4 h-4"></i>
               </button>
             </div>
 
-            <!-- Tabela de Transações -->
             <div class="flex-1 overflow-x-auto">
               <table class="w-full text-left border-collapse min-w-[500px]">
                 <thead>
-                 <thead>
-    <thead>
-    <tr class="border-b border-slate-800 text-[11px] font-black uppercase text-slate-550 tracking-wider">
-        <th class="py-3 px-2">Descrição</th>
-        <th class="py-3 px-2">Conta Origem</th>
-        <th class="py-3 px-2">Parcelamento</th>
-        <th class="py-3 px-2 text-right">Valor Total</th>
-    </tr>
-</thead>
+                  <tr class="border-b border-slate-800 text-[11px] font-black uppercase text-slate-550 tracking-wider">
+                      <th class="py-3 px-2">Descrição</th>
+                      <th class="py-3 px-2">Conta Origem</th>
+                      <th class="py-3 px-2">Parcelamento</th>
+                      <th class="py-3 px-2 text-right">Valor Total</th>
+                  </tr>
+                </thead>
                 <tbody id="dashboard-activity-list" class="divide-y divide-slate-800/50">
-                  <tr class="text-sm">
-                    <td class="py-4 px-2 text-white font-semibold">DFH</td>
-                    <td class="py-4 px-2 text-slate-300">1/10</td>
-                    <td class="py-4 px-2 text-slate-300">ALIMENTAÇÃO</td>
-                    <td class="py-4 px-2 text-right text-white">• R$ 60,00</td>
-                  </tr>
-                  <tr class="text-sm">
-                    <td class="py-4 px-2 text-white font-semibold">GELADEIRA</td>
-                    <td class="py-4 px-2 text-slate-300">3/8</td>
-                    <td class="py-4 px-2 text-slate-300">CASA</td>
-                    <td class="py-4 px-2 text-right text-white">• R$ 52,25</td>
-                  </tr>
+                  <!-- Renderizado Dinamicamente -->
                 </tbody>
               </table>
             </div>
           </div>
 
         </div>
-
       </section>
 
       <!-- ABA 2: LANÇAMENTOS (FORMULÁRIO DE ENTRADAS) -->
@@ -331,7 +300,6 @@
 
           <form id="transaction-form" class="space-y-4">
             
-            <!-- Campo de Valor Premium -->
             <div class="bg-input-dark py-4 px-6 rounded-2xl border border-slate-800 flex items-center justify-between gap-4">
               <div class="flex flex-col flex-1">
                 <span class="text-[9px] font-black text-slate-550 uppercase tracking-widest mb-1">Qual o valor do lançamento?</span>
@@ -343,13 +311,11 @@
             </div>
 
             <div class="space-y-3">
-              <!-- Descrição -->
               <div class="space-y-1">
                 <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Descrição</label>
                 <input type="text" id="transaction-desc" placeholder="EX: CAFÉ DA MANHÃ, COMPRAS NO MERCADO..." class="w-full p-3.5 rounded-xl outline-none font-bold text-sm uppercase" required />
               </div>
 
-              <!-- Categoria e Data -->
               <div class="grid grid-cols-2 gap-3">
                 <div class="space-y-1">
                   <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Categoria</label>
@@ -363,7 +329,6 @@
                 </div>
               </div>
 
-              <!-- Mês de Referência e Conta Origem -->
               <div class="grid grid-cols-2 gap-3">
                 <div class="space-y-1">
                   <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Mês Ref.</label>
@@ -372,20 +337,16 @@
                 <div class="space-y-1">
                   <label id="lbl-card-origem" class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Conta Origem</label>
                   <select id="transaction-card" class="w-full p-3.5 rounded-xl font-bold text-xs">
-                     <!-- Dinâmico -->
                   </select>
                 </div>
               </div>
 
-              <!-- Forma de Pagamento (Exclusivo Despesa) -->
               <div id="container-payment-method" class="space-y-1">
                 <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Forma de Pagamento</label>
                 <select id="transaction-method" class="w-full p-3.5 rounded-xl font-bold text-xs">
-                   <!-- Dinâmico -->
                 </select>
               </div>
 
-              <!-- Compra Parcelada (Exclusivo Despesa) -->
               <div id="container-installments" class="space-y-3 pt-2">
                 <div class="flex justify-between items-center">
                   <span class="text-[10px] font-black text-slate-400 uppercase tracking-wider">Compra em Prestações?</span>
@@ -400,24 +361,19 @@
                   <input type="number" id="transaction-installments" min="1" max="120" value="2" class="w-20 p-2 text-center rounded-lg font-bold text-sm bg-slate-900 border border-slate-700" />
                 </div>
               </div>
-
             </div>
 
             <button type="submit" id="btn-submit-transaction" class="w-full py-4 mt-2 bg-rose-600 hover:bg-rose-500 rounded-2xl font-black uppercase text-xs tracking-widest transition-all">Guardar Lançamento</button>
           </form>
         </div>
-
       </section>
 
       <!-- ABA 3: HISTÓRICO (PROCURA E FILTROS) -->
       <section id="tab-history" class="tab-content hidden space-y-6 animate-in fade-in duration-300">
         
-        <!-- Meses para navegar -->
         <div class="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-hide" id="history-months-scroll">
-           <!-- Meses dinâmicos baseados em transações existentes -->
         </div>
 
-        <!-- Filtros e Caixa de Procura -->
         <div class="bg-card-dark p-5 rounded-3xl space-y-4">
           <div class="relative">
             <i data-lucide="search" class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500"></i>
@@ -430,24 +386,17 @@
               <button id="filter-expenses" class="px-4 py-2 rounded-lg font-bold text-slate-500 hover:text-white transition-all">Despesas</button>
               <button id="filter-incomes" class="px-4 py-2 rounded-lg font-bold text-slate-500 hover:text-white transition-all">Receitas</button>
             </div>
-
             <div class="flex items-center gap-2 overflow-x-auto pb-1 max-w-full scrollbar-hide" id="history-category-filters">
-               <!-- Filtros de categoria -->
             </div>
           </div>
         </div>
 
-        <!-- Lista Principal -->
         <div id="history-list" class="space-y-3">
-          <!-- Renderizado dinamicamente -->
         </div>
-
       </section>
 
       <!-- ABA 4: AJUSTES -->
       <section id="tab-settings" class="tab-content hidden max-w-2xl mx-auto space-y-6 animate-in fade-in duration-200">
-        
-        <!-- Tabs Internas do Painel de Ajustes -->
         <div class="flex gap-1 p-1 bg-card-dark rounded-xl border border-slate-800">
           <button id="settings-tab-cards" class="flex-1 py-2.5 rounded-lg text-[10px] sm:text-xs font-black uppercase transition-all bg-emerald-600 text-slate-955 flex items-center justify-center gap-1">
             <i data-lucide="credit-card" class="w-3.5 h-3.5"></i> Contas
@@ -460,7 +409,7 @@
           </button>
         </div>
 
-        <!-- Seção: Gerir Contas -->
+        <!-- Seções Internas Ajustes -->
         <div id="settings-section-cards" class="space-y-4">
           <form id="form-add-card" class="bg-card-dark p-6 rounded-3xl space-y-4">
             <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest font-bold">Criar Nova Conta Bancária</h3>
@@ -468,17 +417,13 @@
               <input type="text" id="new-card-name" placeholder="Banco" class="p-3.5 rounded-xl text-sm" required />
               <input type="text" id="new-card-details" placeholder="Ag./Conta" class="p-3.5 rounded-xl text-sm" />
             </div>
-            <button type="submit" class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-500 text-slate-955 rounded-xl font-bold flex items-center justify-center gap-1.5 shadow-lg font-bold uppercase tracking-wider text-xs">
+            <button type="submit" class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-500 text-slate-955 rounded-xl flex items-center justify-center gap-1.5 shadow-lg font-bold uppercase tracking-wider text-xs">
               <i data-lucide="plus" class="w-4 h-4"></i> Cadastrar conta
             </button>
           </form>
-
-          <div id="cards-manager-list" class="space-y-3">
-             <!-- Lista -->
-          </div>
+          <div id="cards-manager-list" class="space-y-3"></div>
         </div>
 
-        <!-- Seção: Gerir Categorias -->
         <div id="settings-section-categories" class="hidden space-y-4">
           <form id="form-add-category" class="bg-card-dark p-6 rounded-3xl space-y-4">
             <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest">Adicionar Nova Categoria</h3>
@@ -489,77 +434,50 @@
                 <option value="income">Receita</option>
               </select>
             </div>
-            <button type="submit" class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-500 text-slate-955 rounded-xl font-bold flex items-center justify-center gap-1.5 shadow-lg font-bold uppercase tracking-wider text-xs">
+            <button type="submit" class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-500 text-slate-955 rounded-xl flex items-center justify-center gap-1.5 shadow-lg font-bold uppercase tracking-wider text-xs">
               <i data-lucide="plus" class="w-4 h-4"></i> Criar Categoria
             </button>
           </form>
-
-          <div id="categories-manager-list" class="space-y-3">
-             <!-- Lista -->
-          </div>
+          <div id="categories-manager-list" class="space-y-3"></div>
         </div>
 
-        <!-- Seção: Sincronização / Backup -->
         <div id="settings-section-sync" class="hidden space-y-4">
-          
-          <!-- Firebase Config opcional -->
           <div class="bg-card-dark p-6 rounded-3xl space-y-4">
              <div class="flex justify-between items-center border-b border-slate-800 pb-2">
                 <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest">Base de Dados Cloud (Firebase)</h3>
-                <button type="button" id="btn-toggle-fb-help" class="text-[9px] text-emerald-400 font-bold uppercase hover:underline">Como configurar?</button>
              </div>
-             
              <textarea id="firebase-config-input" rows="4" placeholder='{"apiKey": "...", "projectId": "...", ...}' class="w-full bg-input-dark p-3 rounded-xl outline-none font-mono text-[10px] text-slate-300"></textarea>
-             
              <div class="grid grid-cols-2 gap-3">
                 <button type="button" id="btn-clear-fb" class="w-full py-2.5 bg-slate-800 text-slate-400 rounded-xl font-bold text-xs uppercase border border-slate-700">Remover Config</button>
                 <button type="button" id="btn-save-fb" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-slate-955 rounded-xl font-bold text-xs uppercase font-bold">Salvar Config</button>
              </div>
-
-             <div id="fb-help-box" class="hidden p-4 bg-slate-955/70 border border-slate-800 rounded-xl space-y-2 text-[10px] text-slate-400 font-semibold leading-relaxed uppercase">
-                <p class="text-emerald-400 font-bold">Configuração Básica:</p>
-                <p>1. Crie um projeto gratuito em <span class="text-white font-black">console.firebase.google.com</span>.</p>
-                <p>2. Ative o <span class="text-white font-black">Firestore Database</span> em "Modo de Teste".</p>
-                <p>3. Ative o login <span class="text-white font-black">Anônimo</span> no painel Auth.</p>
-                <p>4. Cole o objeto JSON de configuração web acima e salve.</p>
-             </div>
           </div>
-
-          <!-- Código de Partilha entre Casal -->
           <div class="bg-card-dark p-6 rounded-3xl space-y-3.5">
              <div class="flex justify-between items-center">
                 <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest">Código de Partilha em Tempo Real</h3>
                 <span id="cloud-status-text" class="text-[8px] bg-amber-500/10 text-amber-400 border border-amber-500/20 px-2 py-0.5 rounded font-black uppercase">Local</span>
              </div>
-             
              <div class="flex gap-2">
                 <input type="text" id="cloud-couple-code" placeholder="Ex: CASAL-SILVA" class="flex-1 p-3.5 rounded-xl outline-none text-xs font-black uppercase tracking-wider text-center" />
                 <button type="button" id="btn-generate-code" class="px-4 bg-slate-800 border border-slate-700 hover:bg-slate-700 text-slate-300 rounded-xl transition-all" title="Gerar Código Dinâmico">
                    <i data-lucide="refresh-cw" class="w-4 h-4"></i>
                 </button>
              </div>
-
              <div class="grid grid-cols-2 gap-3">
-                <button type="button" id="btn-disconnect-cloud" class="w-full py-3 bg-slate-800 hover:bg-slate-700 text-slate-400 rounded-xl font-bold text-xs uppercase border border-slate-700">Desligar Sincronização</button>
-                <button type="button" id="btn-connect-cloud" class="w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-slate-955 rounded-xl font-bold text-xs uppercase shadow-md shadow-emerald-500/10 font-bold">Ligar & Sincronizar</button>
+                <button type="button" id="btn-disconnect-cloud" class="w-full py-3 bg-slate-800 hover:bg-slate-700 text-slate-400 rounded-xl font-bold text-xs uppercase border border-slate-700">Desligar</button>
+                <button type="button" id="btn-connect-cloud" class="w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-slate-955 rounded-xl font-bold text-xs uppercase shadow-md shadow-emerald-500/10">Sincronizar</button>
              </div>
-             
-             <p class="text-[9px] text-slate-550 leading-relaxed uppercase font-bold text-center">Introduza o mesmo código nos dois telemóveis para partilharem os lançamentos instantaneamente!</p>
           </div>
-
-          <!-- Controle de backups locais -->
           <div class="bg-card-dark p-6 rounded-3xl space-y-3">
-             <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest">Backup & Limpeza Física de Dados</h3>
+             <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest">Backup & Limpeza</h3>
              <div class="grid grid-cols-2 gap-3">
-                <button type="button" id="btn-export-backup" class="py-3 bg-slate-900 border border-slate-800 rounded-xl font-bold text-xs text-slate-200">Exportar Ficheiro</button>
-                <label for="import-backup-file" class="py-3 bg-slate-900 border border-slate-800 rounded-xl font-bold text-xs text-slate-200 text-center cursor-pointer">Importar Ficheiro</label>
+                <button type="button" id="btn-export-backup" class="py-3 bg-slate-900 border border-slate-800 rounded-xl font-bold text-xs text-slate-200">Exportar</button>
+                <label for="import-backup-file" class="py-3 bg-slate-900 border border-slate-800 rounded-xl font-bold text-xs text-slate-200 text-center cursor-pointer">Importar</label>
                 <input type="file" id="import-backup-file" class="hidden" accept=".json" />
              </div>
-             <button type="button" id="btn-danger-reset" class="w-full py-3 bg-rose-955 text-rose-400 border border-rose-900/30 rounded-xl font-bold text-xs uppercase">Apagar Todos os Dados</button>
+             <button type="button" id="btn-danger-reset" class="w-full py-3 bg-rose-955 text-rose-400 border border-rose-900/30 rounded-xl font-bold text-xs uppercase">Apagar Dados</button>
           </div>
-
         </div>
-
       </section>
 
     </main>
@@ -629,39 +547,19 @@
         </div>
      </header>
      <div id="statement-content" class="flex-1 overflow-y-auto p-8 text-slate-900 bg-white">
-        <!-- Renderizado dinamicamente ao gerar -->
      </div>
   </div>
 
-<!-- MODAL DETALHES DO PARCELAMENTO -->
-<div id="installment-modal"
-     class="hidden fixed inset-0 z-[170] bg-black/70 backdrop-blur-sm flex items-center justify-center p-6">
-
+  <!-- MODAL DETALHES DO PARCELAMENTO -->
+  <div id="installment-modal" class="hidden fixed inset-0 z-[170] bg-black/70 backdrop-blur-sm flex items-center justify-center p-6">
     <div class="bg-card-dark w-full max-w-xl rounded-3xl border border-slate-800">
-
         <div class="flex justify-between items-center p-6 border-b border-slate-800">
-
-            <h2 id="installment-title"
-                class="text-white font-black text-lg">
-                Parcelamento
-            </h2>
-
-            <button type="button"
-                    onclick="closeInstallmentModal()"
-                    class="text-slate-400 hover:text-white text-2xl">
-                ✕
-            </button>
-
+            <h2 id="installment-title" class="text-white font-black text-lg">Parcelamento</h2>
+            <button type="button" onclick="closeInstallmentModal()" class="text-slate-400 hover:text-white text-2xl">✕</button>
         </div>
-
-        <div id="installment-content"
-             class="p-6 max-h-[70vh] overflow-y-auto">
-
-        </div>
-
+        <div id="installment-content" class="p-6 max-h-[70vh] overflow-y-auto"></div>
     </div>
-
-</div>
+  </div>
 
   <!-- MODAL DE OPÇÕES RÁPIDAS PARA LANÇAMENTO -->
   <div id="transaction-options-modal" class="hidden fixed inset-0 z-[200] bg-black/85 backdrop-blur-md flex items-center justify-center p-6">
@@ -681,7 +579,6 @@
      </div>
   </div>
 
-  <!-- SCRIPTS: Lógica de Dados Real-time e PWA -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
     import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
@@ -710,6 +607,7 @@
     let isCloudConnected = false;
     let cloudUnsubscribe = null;
     let authUser = null;
+    let totalPieChartInstance = null; // Instância do Gráfico
 
     function formatBRL(val) {
       return val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
@@ -758,7 +656,6 @@
 
        inputs.forEach(input => {
           if (!input) return;
-          
           input.addEventListener('input', (e) => {
              let value = e.target.value;
              value = value.replace(/\D/g, "");
@@ -841,14 +738,15 @@
       }
 
       const methodKey = `methods_${LOCAL_KEY}`;
-      // Define as formas de pagamento conforme solicitado
-      const defaultMethods = [
-          { id: crypto.randomUUID(), name: "DINHEIRO" },
-          { id: crypto.randomUUID(), name: "DÉBITO" },
-          { id: crypto.randomUUID(), name: "PIX" },
-          { id: crypto.randomUUID(), name: "CRÉDITO" }
-      ];
-      localStorage.setItem(methodKey, JSON.stringify(defaultMethods));
+      if (getLocalCollection(methodKey).length === 0) {
+         const defaultMethods = [
+             { id: crypto.randomUUID(), name: "DINHEIRO" },
+             { id: crypto.randomUUID(), name: "DÉBITO" },
+             { id: crypto.randomUUID(), name: "PIX" },
+             { id: crypto.randomUUID(), name: "CRÉDITO" }
+         ];
+         localStorage.setItem(methodKey, JSON.stringify(defaultMethods));
+      }
     }
 
     const DB = {
@@ -1023,132 +921,134 @@
     }
 
     function renderDashboard() {
-  const { cardBalances } = calculateBalances();
-  
-  let incomeSum = 0;
-  let totalExpenseSum = 0;
-  let unpaidExpenseSum = 0;
+      const { cardBalances } = calculateBalances();
+      
+      let incomeSum = 0;
+      let totalExpenseSum = 0;
+      let unpaidExpenseSum = 0;
 
-  const monthlyTransactions = expandedTransactions().filter(t => t.displayMonth === state.selectedMonth);
-  monthlyTransactions.forEach(t => {
-    if (t.type === 'income') {
-      incomeSum += t.displayAmount;
-    } else {
-      totalExpenseSum += t.displayAmount; // guarda o total pra referência
-      if (!isExpensePaid(t)) {
-        unpaidExpenseSum += t.displayAmount; // só não pagas
+      // Cálculo Mensal para KPIs Superiores
+      const monthlyTransactions = expandedTransactions().filter(t => t.displayMonth === state.selectedMonth);
+      monthlyTransactions.forEach(t => {
+        if (t.type === 'income') {
+          incomeSum += t.displayAmount;
+        } else {
+          totalExpenseSum += t.displayAmount; 
+          if (!isExpensePaid(t)) {
+            unpaidExpenseSum += t.displayAmount;
+          }
+        }
+      });
+
+      const netBalance = incomeSum - unpaidExpenseSum;
+      const kpiBalance = document.getElementById('kpi-balance');
+      
+      if (kpiBalance) {
+         kpiBalance.textContent = formatBRL(netBalance);
+         kpiBalance.classList.remove('text-white', 'text-red-accent');
+         if (netBalance < 0) {
+            kpiBalance.classList.add('text-red-accent');
+         } else {
+            kpiBalance.classList.add('text-white');
+         }
       }
+
+      document.getElementById('kpi-income').textContent = formatBRL(incomeSum);
+      document.getElementById('kpi-expenses').textContent = formatBRL(unpaidExpenseSum);
+
+      // Renderizando Gráfico Pizza (Valores Históricos e não somente do mês)
+      let allTimeIncome = 0;
+      let allTimeExpense = 0;
+      state.transactions.forEach(t => {
+          if (t.type === 'income') allTimeIncome += t.amount;
+          else allTimeExpense += t.amount;
+      });
+
+      const ctx = document.getElementById('totalPieChart');
+      if (ctx) {
+          if (totalPieChartInstance) {
+              totalPieChartInstance.destroy();
+          }
+          totalPieChartInstance = new Chart(ctx, {
+              type: 'doughnut',
+              data: {
+                  labels: ['Receitas', 'Despesas'],
+                  datasets: [{
+                      data: [allTimeIncome, allTimeExpense],
+                      backgroundColor: ['#10b981', '#f43f5e'],
+                      borderWidth: 0,
+                      hoverOffset: 4
+                  }]
+              },
+              options: {
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  cutout: '75%',
+                  plugins: {
+                      legend: {
+                          position: 'bottom',
+                          labels: {
+                              color: '#94a3b8',
+                              font: {
+                                  size: 11,
+                                  family: "'Plus Jakarta Sans', sans-serif",
+                                  weight: 'bold'
+                              },
+                              padding: 15,
+                              usePointStyle: true,
+                              pointStyle: 'circle'
+                          }
+                      }
+                  }
+              }
+          });
+      }
+
+      // Renderizando Minhas Economias (Tabela)
+      const activityList = document.getElementById('dashboard-activity-list');
+      if (activityList) {
+          activityList.innerHTML = "";
+          const parcelas = state.transactions
+          .filter(t => t.type === "expense" && t.isInstallment)
+          .sort((a,b)=>new Date(b.date)-new Date(a.date));
+
+          if(parcelas.length===0){
+              activityList.innerHTML=`
+              <tr>
+                  <td colspan="4" class="py-8 text-center text-slate-500 font-bold text-xs uppercase tracking-widest">
+                      Nenhuma compra parcelada.
+                  </td>
+              </tr>
+              `;
+          }else{
+              parcelas.forEach(t=>{
+                  const tr = document.createElement("tr");
+                  tr.className = "border-b border-slate-800 hover:bg-slate-800/60 cursor-pointer transition-all duration-200";
+                  tr.innerHTML = `
+                      <td class="py-3 px-2">
+                          <p class="text-xs font-bold text-white uppercase">${t.description}</p>
+                      </td>
+                      <td class="py-3 px-2">
+                          <span class="text-slate-300 font-semibold text-xs uppercase">${t.cardUsed || "-"}</span>
+                      </td>
+                      <td class="py-3 px-2">
+                          <p class="text-[10px] font-black text-slate-400">
+                              ${t.installmentsCount}x de ${formatBRL(t.amount / t.installmentsCount)}
+                          </p>
+                      </td>
+                      <td class="py-3 px-2 text-right">
+                          <span class="text-white font-bold whitespace-nowrap text-sm">${formatBRL(t.amount)}</span>
+                      </td>
+                  `;
+                  tr.onclick = () => {
+                      openInstallmentModal(t);
+                  };
+                  activityList.appendChild(tr);
+              });
+          }
+      }
+      if (typeof lucide !== 'undefined') lucide.createIcons();
     }
-  });
-
-  // CORRIGIDO: Saldo Geral = Receitas - Despesas em Aberto
-  const netBalance = incomeSum - unpaidExpenseSum;
-  
-  const kpiBalance = document.getElementById('kpi-balance');
-  
-  if (kpiBalance) {
-     kpiBalance.textContent = formatBRL(netBalance);
-     kpiBalance.classList.remove('text-white', 'text-red-accent');
-     if (netBalance < 0) {
-        kpiBalance.classList.add('text-red-accent');
-     } else {
-        kpiBalance.classList.add('text-white');
-     }
-  }
-
-  document.getElementById('kpi-income').textContent = formatBRL(incomeSum);
-  document.getElementById('kpi-expenses').textContent = formatBRL(unpaidExpenseSum);
-
-  const accountsList = document.getElementById('dashboard-accounts-list');
-  if (accountsList) {
-     accountsList.innerHTML = '';
-     state.customCards.forEach(c => {
-        const current = cardBalances[c.name] || 0;
-        const isNegative = current < 0;
-        
-        const div = document.createElement('div');
-        div.className = "bg-slate-900/40 p-4 rounded-2xl border border-slate-800/70 flex justify-between items-center";
-        div.innerHTML = `
-           <div class="flex items-center gap-3">
-             <div class="p-2.5 rounded-xl bg-slate-800 text-slate-400">
-               <i data-lucide="building-2" class="w-4 h-4"></i>
-             </div>
-             <div>
-               <p class="text-xs font-bold text-white uppercase">${c.name}</p>
-               <p class="text- text-slate-550 font-extrabold uppercase mt-0.5">${c.details || 'NÃO DEFINIDA'}</p>
-             </div>
-           </div>
-           <span class="text-xs font-black ${isNegative ? 'text-red-accent' : 'text-green-accent'}">${formatBRL(current)}</span>
-        `;
-        accountsList.appendChild(div);
-     });
-  }
-
-const activityList = document.getElementById('dashboard-activity-list');
-
-if (activityList) {
-
-    activityList.innerHTML = "";
-
-    const parcelas = state.transactions
-    .filter(t => t.type === "expense" && t.isInstallment)
-    .sort((a,b)=>new Date(b.date)-new Date(a.date));
-
-    if(parcelas.length===0){
-
-        activityList.innerHTML=`
-        <tr>
-            <td colspan="4" class="py-8 text-center text-slate-500 font-bold">
-                Nenhuma compra parcelada.
-            </td>
-        </tr>
-        `;
-
-    }else{
-
-        parcelas.forEach(t=>{
-
-const tr = document.createElement("tr");
-
-tr.className =
-"border-b border-slate-800 hover:bg-slate-800/60 cursor-pointer transition-all duration-200";
-            tr.innerHTML = `
-    <td class="py-3 px-2">
-        <p class="text-xs font-bold text-white uppercase">
-            ${t.description}
-        </p>
-    </td>
-
-    <td class="py-3 px-2">
-        <span class="text-slate-300 font-semibold">
-            ${t.cardUsed || "-"}
-        </span>
-    </td>
-
-<td class="py-3 px-2">
-    <p class="text-xs font-black text-white">
-        ${t.installmentsCount} x de ${formatBRL(t.amount / t.installmentsCount)}
-    </p>
-</td>
-
-<td class="py-3 px-2 text-right">
-    <span class="text-white font-bold whitespace-nowrap">
-        ${formatBRL(t.amount)}
-    </span>
-</td>
-`;
-tr.onclick = () => {
-    openInstallmentModal(t);
-};
-            activityList.appendChild(tr);
-
-        });
-
-    }
-
-}
-  if (typeof lucide !== 'undefined') lucide.createIcons();
-}
 
     function renderHistory() {
       const container = document.getElementById('history-list');
@@ -1180,16 +1080,12 @@ tr.onclick = () => {
          const formattedDate = t.date ? formatDate(t.date) : '';
          const div = document.createElement('div');
          
-         // Custom layout: Left (Description, Category, Account), Right (Installment Indicator dynamically placed at left of Date/Amount container as requested in image_4f2e5d.png)
          div.className = "bg-card-dark p-4 rounded-2xl flex justify-between items-center gap-4 hover:bg-slate-900/60 transition-all cursor-pointer";
          div.innerHTML = `
             <div class="flex items-center gap-3 flex-1 min-w-0">
-               <!-- ÍCONE DE TENDÊNCIA -->
                <div class="p-3 rounded-xl ${isIncome ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400'} shrink-0">
                   <i data-lucide="${isIncome ? 'trending-up' : 'trending-down'}" class="w-4 h-4"></i>
                </div>
-
-               <!-- DESCRIÇÃO E DETALHES -->
                <div class="min-w-0 flex-1">
                   <p class="text-xs font-bold text-white uppercase truncate">${t.description}</p>
                   <div class="flex flex-wrap items-center gap-1.5 mt-1 text-[9px] font-black text-slate-550">
@@ -1199,15 +1095,14 @@ tr.onclick = () => {
                </div>
             </div>
             
-            <!-- DATA, PARCELA E VALOR NA DIREITA (PARCELA ADICIONADA À ESQUERDA DO BLOCO CONFORME image_4f2e5d.png) -->
             <div class="shrink-0 flex items-center gap-3">
                ${!isIncome ? `<button type="button" class="payment-toggle px-3 py-2 rounded-xl text-[9px] font-black uppercase border transition-all ${isPaid ? 'bg-emerald-600 text-slate-950 border-emerald-500' : 'bg-slate-900 text-slate-400 border-slate-700 hover:text-white'}" title="${isPaid ? 'Marcar como nao pago' : 'Marcar como pago'}">${isPaid ? 'Pago' : 'Pagar'}</button>` : ''}
                ${t.installmentLabel ? `<span class="bg-blue-500/15 text-blue-400 px-2 py-1 rounded text-[9px] font-black whitespace-nowrap">Parc ${t.installmentLabel}</span>` : ''}
                <div class="shrink-0 flex flex-col items-end gap-1.5 text-right">
                   ${formattedDate ? `<span class="text-[10px] font-black text-slate-400 uppercase">${formattedDate}</span>` : ''}
                   <div class="text-sm font-black whitespace-nowrap ${isIncome || isPaid ? 'text-green-accent' : 'text-red-accent'} select-none">
-   ${isIncome || isPaid ? '+' : '-'} ${formatBRL(t.displayAmount)}
-</div>
+                     ${isIncome || isPaid ? '+' : '-'} ${formatBRL(t.displayAmount)}
+                  </div>
                </div>
             </div>
          `;
@@ -1450,7 +1345,6 @@ tr.onclick = () => {
        document.getElementById('edit-trans-installments-count').value = t.installmentsCount || 1;
        document.getElementById('edit-trans-desc').value = t.description;
        
-       // Exibe o valor da parcela individual se for parcelado (com base no displayAmount), senão mostra o valor total.
        const amountToDisplay = t.displayAmount !== undefined ? t.displayAmount : t.amount;
        
        document.getElementById('edit-trans-amount').value = amountToDisplay.toLocaleString('pt-BR', {
@@ -1537,7 +1431,6 @@ tr.onclick = () => {
 
        showToast("Registro salvo com sucesso!", "success");
        
-       // Limpeza total do formulário e redefinições de estado (Prestações -> Não)
        document.getElementById('transaction-form').reset();
        document.getElementById('transaction-amount').value = ''; 
        document.getElementById('btn-installment-no').click(); 
@@ -1561,7 +1454,6 @@ tr.onclick = () => {
        const card = document.getElementById('edit-trans-card').value;
        const installmentsCount = parseInt(document.getElementById('edit-trans-installments-count').value) || 1;
 
-       // O total geral é calculado multiplicando o valor editado da parcela pelo total de parcelas
        const totalAmt = amt * installmentsCount;
 
        await DB.updateDoc(`transactions_${LOCAL_KEY}`, id, {
@@ -1801,15 +1693,6 @@ tr.onclick = () => {
           localStorage.clear();
           showToast("Aplicação limpa com sucesso!", "success");
           seedInitialData();
-window.closeInstallmentModal = function () {
-
-    const modal = document.getElementById("installment-modal");
-
-    if (modal) {
-        modal.classList.add("hidden");
-    }
-
-};
           initApp();
        });
     };
@@ -1854,13 +1737,13 @@ window.closeInstallmentModal = function () {
           </div>
           <table class="w-full text-left border-collapse">
              <thead>
-  <tr>
-    <th class="py-3 px-2 text-left text-[9px] font-black uppercase text-slate-600 tracking-wider">Descrição</th>
-    <th class="py-3 px-2 text-left text-[9px] font-black uppercase text-slate-600 tracking-wider">Parcela</th>
-    <th class="py-3 px-2 text-left text-[9px] font-black uppercase text-slate-600 tracking-wider">Status</th>
-    <th class="py-3 px-2 text-right text-[9px] font-black uppercase text-slate-600 tracking-wider">Valor</th>
-  </tr>
-</thead>
+                <tr>
+                  <th class="py-3 px-2 text-left text-[9px] font-black uppercase text-slate-600 tracking-wider">Descrição</th>
+                  <th class="py-3 px-2 text-left text-[9px] font-black uppercase text-slate-600 tracking-wider">Parcela</th>
+                  <th class="py-3 px-2 text-left text-[9px] font-black uppercase text-slate-600 tracking-wider">Status</th>
+                  <th class="py-3 px-2 text-right text-[9px] font-black uppercase text-slate-600 tracking-wider">Valor</th>
+                </tr>
+              </thead>
              <tbody class="divide-y divide-slate-100 text-xs">
                 ${list.map(t => `
                    <tr>
@@ -1892,224 +1775,108 @@ window.closeInstallmentModal = function () {
        document.getElementById('edit-transaction-modal').classList.add('hidden');
     };
 
-function openInstallmentModal(t){
-
-    document.getElementById("installment-title").textContent =
-        t.description;
-
-    document.getElementById("installment-content").innerHTML = `
-
-        <div class="grid grid-cols-2 gap-4">
-
-            <div>
-
-                <span class="text-slate-500 text-xs">
-                    Conta Origem
-                </span>
-
-                <p class="text-white font-bold">
-                    ${t.cardUsed || "-"}
-                </p>
-
+    window.openInstallmentModal = function(t){
+        document.getElementById("installment-title").textContent = t.description;
+        document.getElementById("installment-content").innerHTML = `
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <span class="text-slate-500 text-xs">Conta Origem</span>
+                    <p class="text-white font-bold">${t.cardUsed || "-"}</p>
+                </div>
+                <div>
+                    <span class="text-slate-500 text-xs">Categoria</span>
+                    <p class="text-white font-bold">${t.category}</p>
+                </div>
+                <div>
+                    <span class="text-slate-500 text-xs">Valor Total</span>
+                    <p class="text-green-400 font-bold">${formatBRL(t.amount)}</p>
+                </div>
+                <div>
+                    <span class="text-slate-500 text-xs">Parcelamento</span>
+                    <p class="text-white font-bold">${t.installmentsCount} x de ${formatBRL(t.amount/t.installmentsCount)}</p>
+                </div>
             </div>
+            <hr class="border-slate-800 my-4">
+            <div id="parcelas-lista"></div>
+        `;
 
-            <div>
+        const parcelas = expandedTransactions()
+            .filter(p => p.type === "expense" && p.description === t.description && p.installmentLabel)
+            .sort((a, b) => (a.installmentNumber || 0) - (b.installmentNumber || 0));
 
-                <span class="text-slate-500 text-xs">
-                    Categoria
-                </span>
+        let lista = "";
+        let pagas = 0;
+        let saldoRestante = 0;
 
-                <p class="text-white font-bold">
-                    ${t.category}
-                </p>
+        parcelas.forEach(p => {
+            const paga = isExpensePaid(p);
+            if (paga) {
+                pagas++;
+            } else {
+                saldoRestante += p.displayAmount;
+            }
 
+            lista += `
+                <div class="flex justify-between items-center py-3 border-b border-slate-800">
+                    <div>
+                        <p class="font-bold text-white">${p.installmentLabel}</p>
+                        <p class="text-xs ${paga ? 'text-emerald-400' : 'text-amber-400'}">${paga ? '✔ Pago' : '⏳ Pendente'}</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="font-bold text-white">${formatBRL(p.displayAmount)}</p>
+                    </div>
+                </div>
+            `;
+        });
+
+        lista += `
+            <div class="mt-6 bg-slate-900 rounded-2xl p-4 space-y-2">
+                <div class="flex justify-between">
+                    <span class="text-slate-400">Parcelas pagas</span>
+                    <strong class="text-white">${pagas} de ${t.installmentsCount}</strong>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-slate-400">Restantes</span>
+                    <strong class="text-white">${t.installmentsCount-pagas}</strong>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-slate-400">Saldo restante</span>
+                    <strong class="text-amber-400">${formatBRL(saldoRestante)}</strong>
+                </div>
             </div>
+        `;
 
-            <div>
-
-                <span class="text-slate-500 text-xs">
-                    Valor Total
-                </span>
-
-                <p class="text-green-400 font-bold">
-                    ${formatBRL(t.amount)}
-                </p>
-
-            </div>
-
-            <div>
-
-                <span class="text-slate-500 text-xs">
-                    Parcelamento
-                </span>
-
-                <p class="text-white font-bold">
-                    ${t.installmentsCount} x de
-                    ${formatBRL(t.amount/t.installmentsCount)}
-                </p>
-
-            </div>
-
-        </div>
-
-        <hr class="border-slate-800">
-
-        <div id="parcelas-lista">
-
-        </div>
-
-    `;
-
-const parcelas = expandedTransactions()
-    .filter(p =>
-        p.type === "expense" &&
-        p.description === t.description &&
-        p.installmentLabel
-    )
-    .sort((a, b) => (a.installmentNumber || 0) - (b.installmentNumber || 0));
-
-let lista = "";
-
-let pagas = 0;
-let saldoRestante = 0;
-
-parcelas.forEach(p => {
-
-    const paga = isExpensePaid(p);
-
-    if (paga) {
-        pagas++;
-    } else {
-        saldoRestante += p.displayAmount;
+        document.getElementById("parcelas-lista").innerHTML = lista;
+        const modal = document.getElementById("installment-modal");
+        modal.classList.remove("hidden");
     }
 
-    lista += `
+    window.closeInstallmentModal = function () {
+        const modal = document.getElementById("installment-modal");
+        if (modal) {
+            modal.classList.add("hidden");
+        }
+    };
 
-        <div class="flex justify-between items-center py-3 border-b border-slate-800">
-
-            <div>
-
-                <p class="font-bold text-white">
-                    ${p.installmentLabel}
-                </p>
-
-                <p class="text-xs ${paga ? 'text-emerald-400' : 'text-amber-400'}">
-
-                    ${paga ? '✔ Pago' : '⏳ Pendente'}
-
-                </p>
-
-            </div>
-
-            <div class="text-right">
-
-                <p class="font-bold text-white">
-
-                    ${formatBRL(p.displayAmount)}
-
-                </p>
-
-            </div>
-
-        </div>
-
-    `;
-
-});
-
-lista += `
-
-<div class="mt-6 bg-slate-900 rounded-2xl p-4 space-y-2">
-
-    <div class="flex justify-between">
-
-        <span class="text-slate-400">
-            Parcelas pagas
-        </span>
-
-        <strong class="text-white">
-
-            ${pagas} de ${t.installmentsCount}
-
-        </strong>
-
-    </div>
-
-    <div class="flex justify-between">
-
-        <span class="text-slate-400">
-
-            Restantes
-
-        </span>
-
-        <strong class="text-white">
-
-            ${t.installmentsCount-pagas}
-
-        </strong>
-
-    </div>
-
-    <div class="flex justify-between">
-
-        <span class="text-slate-400">
-
-            Saldo restante
-
-        </span>
-
-        <strong class="text-amber-400">
-
-            ${formatBRL(saldoRestante)}
-
-        </strong>
-
-    </div>
-
-</div>
-
-`;
-
-document.getElementById("parcelas-lista").innerHTML = lista;
-
-if (typeof lucide !== "undefined") {
-    lucide.createIcons();
-}
-    const modal = document.getElementById("installment-modal");
-
-modal.classList.remove("hidden");
-
-}
-window.closeInstallmentModal = function () {
-
-    const modal = document.getElementById("installment-modal");
-
-    if (modal) {
-        modal.classList.add("hidden");
-    }
-
-};
     function initApp() {
-   syncStateFromLocal();
-   const code = localStorage.getItem(`sharingCode_${LOCAL_KEY}`);
-   if (code) state.sharingCode = code;
+       syncStateFromLocal();
+       const code = localStorage.getItem(`sharingCode_${LOCAL_KEY}`);
+       if (code) state.sharingCode = code;
 
-   document.getElementById('transaction-date').value = new Date().toISOString().split('T')[0];
-   setupCurrencyMasks();
-   document.querySelectorAll('.nav-tab-btn')[0].click();
+       document.getElementById('transaction-date').value = new Date().toISOString().split('T')[0];
+       setupCurrencyMasks();
+       document.querySelectorAll('.nav-tab-btn')[0].click();
 
-   // COLA AQUI O CÓDIGO DOS CLIQUES
-   document.getElementById('card-kpi-income').onclick = () => {
-     document.querySelector('.nav-tab-btn[data-tab="form"]').click();
-     setTimeout(() => document.getElementById('btn-type-income').click(), 50);
-   };
+       document.getElementById('card-kpi-income').onclick = () => {
+         document.querySelector('.nav-tab-btn[data-tab="form"]').click();
+         setTimeout(() => document.getElementById('btn-type-income').click(), 50);
+       };
 
-   document.getElementById('card-kpi-expenses').onclick = () => {
-     document.querySelector('.nav-tab-btn[data-tab="form"]').click();
-     setTimeout(() => document.getElementById('btn-type-expense').click(), 50);
-   };
-}
+       document.getElementById('card-kpi-expenses').onclick = () => {
+         document.querySelector('.nav-tab-btn[data-tab="form"]').click();
+         setTimeout(() => document.getElementById('btn-type-expense').click(), 50);
+       };
+    }
 
     window.onload = () => {
        seedInitialData();
