@@ -217,9 +217,9 @@
               <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Saldo Geral do M&ecirc;s</p>
               <h2 id="kpi-balance" class="text-3xl font-extrabold text-white">R$ 0,00</h2>
             </div>
-            <div class="flex items-center gap-1 text-[11px] text-emerald-400 font-bold mt-4">
+            <div class="flex items-center gap-1 text-[11px] text-white font-bold mt-4">
               <i data-lucide="git-merge" class="w-3.5 h-3.5"></i>
-              <span>Receitas menos despesas do m&ecirc;s</span>
+              <span>Receitas menos despesas do mês</span>
             </div>
           </div>
 
@@ -974,49 +974,30 @@
               totalPieChartInstance.destroy();
           }
           totalPieChartInstance = new Chart(ctx, {
-              type: 'doughnut',
+              type: 'bar',
               data: {
                   labels: [`Receitas (${pctIncome}%)`, `Despesas (${pctExpense}%)`],
                   datasets: [{
                       data: [allTimeIncome, allTimeExpense],
                       backgroundColor: ['#10b981', '#f43f5e'],
-                      borderWidth: 0,
-                      hoverOffset: 4
+                      borderRadius: 8
                   }]
               },
               options: {
                   responsive: true,
                   maintainAspectRatio: false,
-                  cutout: '70%',
                   plugins: {
-                      legend: {
-                          position: 'bottom',
-                          labels: {
-                              color: '#94a3b8',
-                              font: {
-                                  size: 11,
-                                  family: "'Plus Jakarta Sans', sans-serif",
-                                  weight: 'bold'
-                              },
-                              padding: 15,
-                              usePointStyle: true,
-                              pointStyle: 'circle'
-                          }
+                      legend: { display: false }
+                  },
+                  scales: {
+                      y: {
+                          beginAtZero: true,
+                          ticks: { color: '#94a3b8', font: { size: 10 } },
+                          grid: { color: '#1e293b' }
                       },
-                      tooltip: {
-                          callbacks: {
-                              label: function(context) {
-                                  let label = context.label || '';
-                                  if (label) {
-                                      // Remove a porcentagem do rótulo ao exibir no tooltip
-                                      label = label.split(' (')[0] + ': ';
-                                  }
-                                  if (context.parsed !== null) {
-                                      label += new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(context.parsed);
-                                  }
-                                  return label;
-                              }
-                          }
+                      x: {
+                          ticks: { color: '#94a3b8', font: { size: 10 } },
+                          grid: { display: false }
                       }
                   }
               }
