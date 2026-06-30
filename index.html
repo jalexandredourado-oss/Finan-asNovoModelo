@@ -287,13 +287,15 @@
             <div class="flex-1 overflow-x-auto">
               <table class="w-full text-left border-collapse min-w-[500px]">
                 <thead>
-                  <tr class="border-b border-slate-800 text-[11px] font-black uppercase text-slate-550 tracking-wider">
-                    <th class="py-3 px-2">Descrição</th>
-                    <th class="py-3 px-2">Parcela</th>
-                    <th class="py-3 px-2">Status</th>
-                    <th class="py-3 px-2 text-right">Valor Total</th>
-                  </tr>
-                </thead>
+                 <thead>
+    <thead>
+    <tr class="border-b border-slate-800 text-[11px] font-black uppercase text-slate-550 tracking-wider">
+        <th class="py-3 px-2">Descrição</th>
+        <th class="py-3 px-2">Conta Origem</th>
+        <th class="py-3 px-2">Parcelamento</th>
+        <th class="py-3 px-2 text-right">Valor Total</th>
+    </tr>
+</thead>
                 <tbody id="dashboard-activity-list" class="divide-y divide-slate-800/50">
                   <tr class="text-sm">
                     <td class="py-4 px-2 text-white font-semibold">DFH</td>
@@ -630,6 +632,36 @@
         <!-- Renderizado dinamicamente ao gerar -->
      </div>
   </div>
+
+<!-- MODAL DETALHES DO PARCELAMENTO -->
+<div id="installment-modal"
+     class="hidden fixed inset-0 z-[170] bg-black/70 backdrop-blur-sm flex items-center justify-center p-6">
+
+    <div class="bg-card-dark w-full max-w-xl rounded-3xl border border-slate-800">
+
+        <div class="flex justify-between items-center p-6 border-b border-slate-800">
+
+            <h2 id="installment-title"
+                class="text-white font-black text-lg">
+                Parcelamento
+            </h2>
+
+            <button type="button"
+                    onclick="closeInstallmentModal()"
+                    class="text-slate-400 hover:text-white text-2xl">
+                ✕
+            </button>
+
+        </div>
+
+        <div id="installment-content"
+             class="p-6 max-h-[70vh] overflow-y-auto">
+
+        </div>
+
+    </div>
+
+</div>
 
   <!-- MODAL DE OPÇÕES RÁPIDAS PARA LANÇAMENTO -->
   <div id="transaction-options-modal" class="hidden fixed inset-0 z-[200] bg-black/85 backdrop-blur-md flex items-center justify-center p-6">
@@ -1053,46 +1085,67 @@
   }
 
 const activityList = document.getElementById('dashboard-activity-list');
+
 if (activityList) {
-   activityList.innerHTML = '';
 
-   // Pega só lançamentos parcelados do mês
-   const parcelas = state.transactions
-   .filter(t => t.type === 'expense' && t.isInstallment)
-   .sort((a,b) => new Date(b.date) - new Date(a.date));
+    activityList.innerHTML = "";
 
-   if (parcelas.length === 0) {
-      activityList.innerHTML = `
-         <tr>
-           <td colspan="4" class="py-10 text-center text- uppercase font-black text-slate-600 italic">Sem parcelas cadastradas</td>
-         </tr>
-      `;
-   } else {
-      parcelas.forEach(t => {
-         const valorTotal = t.amount;
-         const qtdParcelas = t.installments || 1;
-         const valorParcela = valorTotal / qtdParcelas;
+    const parcelas = state.transactions
+    .filter(t => t.type === "expense" && t.isInstallment)
+    .sort((a,b)=>new Date(b.date)-new Date(a.date));
 
-         const tr = document.createElement('tr');
-         tr.className = "hover:bg-slate-900/30 transition-all";
-         tr.innerHTML = `
-           <td class="py-3 px-2">
-             <p class="text-xs font-bold text-white uppercase">${t.description}</p>
+    if(parcelas.length===0){
 
-           </td>
-           <td class="py-3 px-2">
-             <span class="text-blue-400 px-2 py-1 rounded text- font-black whitespace-nowrap">${qtdParcelas}x de ${formatBRL(valorParcela)}</span>
-           </td>
-           <td class="py-3 px-2">
-             <span class="px-2 py-0.5 rounded text- font-black uppercase bg-slate-700/50 text-slate-400">${t.category || 'GERAL'}</span>
-           </td>
-           <td class="py-3 px-2 text-right">
-             <p class="text-xs font-black text-red-accent">- ${formatBRL(valorParcela)}</p>
-           </td>
-         `;
-         activityList.appendChild(tr);
-      });
-   }
+        activityList.innerHTML=`
+        <tr>
+            <td colspan="4" class="py-8 text-center text-slate-500 font-bold">
+                Nenhuma compra parcelada.
+            </td>
+        </tr>
+        `;
+
+    }else{
+
+        parcelas.forEach(t=>{
+
+const tr = document.createElement("tr");
+
+tr.className =
+"border-b border-slate-800 hover:bg-slate-800/60 cursor-pointer transition-all duration-200";
+            tr.innerHTML = `
+    <td class="py-3 px-2">
+        <p class="text-xs font-bold text-white uppercase">
+            ${t.description}
+        </p>
+    </td>
+
+    <td class="py-3 px-2">
+        <span class="text-slate-300 font-semibold">
+            ${t.cardUsed || "-"}
+        </span>
+    </td>
+
+<td class="py-3 px-2">
+    <p class="text-xs font-black text-white">
+        ${t.installmentsCount} x de ${formatBRL(t.amount / t.installmentsCount)}
+    </p>
+</td>
+
+<td class="py-3 px-2 text-right">
+    <span class="text-white font-bold whitespace-nowrap">
+        ${formatBRL(t.amount)}
+    </span>
+</td>
+`;
+tr.onclick = () => {
+    openInstallmentModal(t);
+};
+            activityList.appendChild(tr);
+
+        });
+
+    }
+
 }
   if (typeof lucide !== 'undefined') lucide.createIcons();
 }
@@ -1748,6 +1801,15 @@ if (activityList) {
           localStorage.clear();
           showToast("Aplicação limpa com sucesso!", "success");
           seedInitialData();
+window.closeInstallmentModal = function () {
+
+    const modal = document.getElementById("installment-modal");
+
+    if (modal) {
+        modal.classList.add("hidden");
+    }
+
+};
           initApp();
        });
     };
@@ -1830,6 +1892,204 @@ if (activityList) {
        document.getElementById('edit-transaction-modal').classList.add('hidden');
     };
 
+function openInstallmentModal(t){
+
+    document.getElementById("installment-title").textContent =
+        t.description;
+
+    document.getElementById("installment-content").innerHTML = `
+
+        <div class="grid grid-cols-2 gap-4">
+
+            <div>
+
+                <span class="text-slate-500 text-xs">
+                    Conta Origem
+                </span>
+
+                <p class="text-white font-bold">
+                    ${t.cardUsed || "-"}
+                </p>
+
+            </div>
+
+            <div>
+
+                <span class="text-slate-500 text-xs">
+                    Categoria
+                </span>
+
+                <p class="text-white font-bold">
+                    ${t.category}
+                </p>
+
+            </div>
+
+            <div>
+
+                <span class="text-slate-500 text-xs">
+                    Valor Total
+                </span>
+
+                <p class="text-green-400 font-bold">
+                    ${formatBRL(t.amount)}
+                </p>
+
+            </div>
+
+            <div>
+
+                <span class="text-slate-500 text-xs">
+                    Parcelamento
+                </span>
+
+                <p class="text-white font-bold">
+                    ${t.installmentsCount} x de
+                    ${formatBRL(t.amount/t.installmentsCount)}
+                </p>
+
+            </div>
+
+        </div>
+
+        <hr class="border-slate-800">
+
+        <div id="parcelas-lista">
+
+        </div>
+
+    `;
+
+const parcelas = expandedTransactions()
+    .filter(p =>
+        p.type === "expense" &&
+        p.description === t.description &&
+        p.installmentLabel
+    )
+    .sort((a, b) => (a.installmentNumber || 0) - (b.installmentNumber || 0));
+
+let lista = "";
+
+let pagas = 0;
+let saldoRestante = 0;
+
+parcelas.forEach(p => {
+
+    const paga = isExpensePaid(p);
+
+    if (paga) {
+        pagas++;
+    } else {
+        saldoRestante += p.displayAmount;
+    }
+
+    lista += `
+
+        <div class="flex justify-between items-center py-3 border-b border-slate-800">
+
+            <div>
+
+                <p class="font-bold text-white">
+                    ${p.installmentLabel}
+                </p>
+
+                <p class="text-xs ${paga ? 'text-emerald-400' : 'text-amber-400'}">
+
+                    ${paga ? '✔ Pago' : '⏳ Pendente'}
+
+                </p>
+
+            </div>
+
+            <div class="text-right">
+
+                <p class="font-bold text-white">
+
+                    ${formatBRL(p.displayAmount)}
+
+                </p>
+
+            </div>
+
+        </div>
+
+    `;
+
+});
+
+lista += `
+
+<div class="mt-6 bg-slate-900 rounded-2xl p-4 space-y-2">
+
+    <div class="flex justify-between">
+
+        <span class="text-slate-400">
+            Parcelas pagas
+        </span>
+
+        <strong class="text-white">
+
+            ${pagas} de ${t.installmentsCount}
+
+        </strong>
+
+    </div>
+
+    <div class="flex justify-between">
+
+        <span class="text-slate-400">
+
+            Restantes
+
+        </span>
+
+        <strong class="text-white">
+
+            ${t.installmentsCount-pagas}
+
+        </strong>
+
+    </div>
+
+    <div class="flex justify-between">
+
+        <span class="text-slate-400">
+
+            Saldo restante
+
+        </span>
+
+        <strong class="text-amber-400">
+
+            ${formatBRL(saldoRestante)}
+
+        </strong>
+
+    </div>
+
+</div>
+
+`;
+
+document.getElementById("parcelas-lista").innerHTML = lista;
+
+if (typeof lucide !== "undefined") {
+    lucide.createIcons();
+}
+    const modal = document.getElementById("installment-modal");
+
+modal.classList.remove("hidden");
+
+}
+window.closeInstallmentModal = function () {
+
+    const modal = document.getElementById("installment-modal");
+
+    if (modal) {
+        modal.classList.add("hidden");
+    }
+
+};
     function initApp() {
    syncStateFromLocal();
    const code = localStorage.getItem(`sharingCode_${LOCAL_KEY}`);
