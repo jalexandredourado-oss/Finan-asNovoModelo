@@ -234,30 +234,24 @@
           </div>
 
           <!-- Card Total Receitas -->
-          <div class="bg-card-dark p-6 rounded-3xl flex flex-col justify-between min-h-[140px] relative overflow-hidden">
-            <div class="absolute top-0 right-0 w-32 h-32 blur-[80px] -mr-16 -mt-16 bg-emerald-500/10"></div>
-            <div>
-              <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Total de Receitas</p>
-              <h2 id="kpi-income" class="text-3xl font-extrabold text-green-accent">R$ 0,00</h2>
-            </div>
-            <div class="flex items-center gap-1 text-[11px] text-emerald-500/80 font-bold mt-4">
-              <i data-lucide="trending-up" class="w-3.5 h-3.5"></i>
-              <span>Receitas do m&ecirc;s selecionado</span>
-            </div>
-          </div>
+          <div id="card-kpi-income" class="bg-card-dark rounded-3xl p-5 cursor-pointer hover:bg-slate-900/60 transition-all active:scale-95">
+  <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Total de Receitas</p>
+  <div id="kpi-income" class="text-2xl font-black text-green-accent leading-none">R$ 0,00</div>
+  <div class="text-[9px] font-extrabold text-slate-550 uppercase tracking-wider mt-3 flex items-center gap-1.5">
+    <i data-lucide="trending-up" class="w-3 h-3 text-green-accent"></i>
+    <span>Receitas do mês selecionado</span>
+  </div>
+</div>
 
           <!-- Card Total Despesas -->
-          <div class="bg-card-dark p-6 rounded-3xl flex flex-col justify-between min-h-[140px] relative overflow-hidden">
-            <div class="absolute top-0 right-0 w-32 h-32 blur-[80px] -mr-16 -mt-16 bg-rose-500/10"></div>
-            <div>
-              <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Total de Despesas</p>
-              <h2 id="kpi-expenses" class="text-3xl font-extrabold text-red-accent">R$ 0,00</h2>
-            </div>
-            <div class="flex items-center gap-1 text-[11px] text-red-accent/80 font-bold mt-4">
-              <i data-lucide="trending-down" class="w-3.5 h-3.5"></i>
-              <span>Despesas do m&ecirc;s selecionado</span>
-            </div>
-          </div>
+          <div id="card-kpi-expenses" class="bg-card-dark rounded-3xl p-5 cursor-pointer hover:bg-slate-900/60 transition-all active:scale-95">
+  <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Total de Despesas</p>
+  <div id="kpi-expenses" class="text-2xl font-black text-red-accent leading-none">R$ 0,00</div>
+  <div class="text-[9px] font-extrabold text-slate-550 uppercase tracking-wider mt-3 flex items-center gap-1.5">
+    <i data-lucide="trending-down" class="w-3 h-3 text-red-accent"></i>
+    <span>Despesas do mês selecionado</span>
+  </div>
+</div>
 
         </div>
 
@@ -281,7 +275,9 @@
           <!-- Coluna Direita: Atividade Recente -->
           <div class="bg-card-dark p-6 rounded-3xl lg:col-span-2 flex flex-col h-full min-h-[350px]">
             <div class="flex justify-between items-center mb-6">
-              <h3 class="text-sm font-black text-white uppercase tracking-wider">Atividade Recente</h3>
+
+
+<h3 class="text-sm font-black text-white uppercase tracking-wider">Minhas Parcelas</h3>
               <button id="btn-dashboard-view-statement" class="p-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl transition-all" title="Ver Extrato Geral">
                 <i data-lucide="file-text" class="w-4 h-4"></i>
               </button>
@@ -291,15 +287,26 @@
             <div class="flex-1 overflow-x-auto">
               <table class="w-full text-left border-collapse min-w-[500px]">
                 <thead>
-                  <tr class="border-b border-slate-800 text-[10px] font-black uppercase text-slate-550 tracking-wider">
+                  <tr class="border-b border-slate-800 text-[11px] font-black uppercase text-slate-550 tracking-wider">
                     <th class="py-3 px-2">Descrição</th>
-                    <th class="py-3 px-2">Conta Origem</th>
-                    <th class="py-3 px-2">Tipo</th>
-                    <th class="py-3 px-2 text-right">Valor</th>
+                    <th class="py-3 px-2">Parcela</th>
+                    <th class="py-3 px-2">Status</th>
+                    <th class="py-3 px-2 text-right">Valor Total</th>
                   </tr>
                 </thead>
                 <tbody id="dashboard-activity-list" class="divide-y divide-slate-800/50">
-                  <!-- Renderizado Dinamicamente -->
+                  <tr class="text-sm">
+                    <td class="py-4 px-2 text-white font-semibold">DFH</td>
+                    <td class="py-4 px-2 text-slate-300">1/10</td>
+                    <td class="py-4 px-2 text-slate-300">ALIMENTAÇÃO</td>
+                    <td class="py-4 px-2 text-right text-white">• R$ 60,00</td>
+                  </tr>
+                  <tr class="text-sm">
+                    <td class="py-4 px-2 text-white font-semibold">GELADEIRA</td>
+                    <td class="py-4 px-2 text-slate-300">3/8</td>
+                    <td class="py-4 px-2 text-slate-300">CASA</td>
+                    <td class="py-4 px-2 text-right text-white">• R$ 52,25</td>
+                  </tr>
                 </tbody>
               </table>
             </div>
@@ -1045,41 +1052,48 @@
      });
   }
 
-  const activityList = document.getElementById('dashboard-activity-list');
-  if (activityList) {
-     activityList.innerHTML = '';
-     const lastTransactions = [...state.transactions].sort((a,b) => new Date(b.date) - new Date(a.date)).slice(0, 10);
-     
-     if (lastTransactions.length === 0) {
-        activityList.innerHTML = `
-           <tr>
-             <td colspan="4" class="py-10 text-center text- uppercase font-black text-slate-600 italic">Sem lançamentos registrados</td>
-           </tr>
-        `;
-     } else {
-        lastTransactions.forEach(t => {
-           const isIncome = t.type === 'income';
-           const tr = document.createElement('tr');
-           tr.className = "hover:bg-slate-900/30 cursor-pointer transition-all";
-           tr.innerHTML = `
-             <td class="py-3 px-2 text-xs font-bold text-white uppercase">${t.description}</td>
-             <td class="py-3 px-2 text- font-black text-slate-400 uppercase">
-               <span class="flex items-center gap-1">
-                  <i data-lucide="wallet" class="w-3.5 h-3.5 text-slate-500"></i>
-                  ${t.cardUsed || 'Nenhuma'}
-               </span>
-             </td>
-             <td class="py-3 px-2">
-               <span class="px-2 py-0.5 rounded text- font-black uppercase ${isIncome ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400'}">${isIncome ? 'Receita' : 'Despesa'}</span>
-             </td>
-             <td class="py-3 px-2 text-right text-xs font-black ${isIncome ? 'text-green-accent' : 'text-red-accent'}">${isIncome ? '+' : '-'} ${formatBRL(t.amount)}</td>
-           `;
-           tr.onclick = () => showTransactionOptions(t);
-           activityList.appendChild(tr);
-        });
-     }
-  }
+const activityList = document.getElementById('dashboard-activity-list');
+if (activityList) {
+   activityList.innerHTML = '';
 
+   // Pega só lançamentos parcelados do mês
+   const parcelas = state.transactions
+   .filter(t => t.type === 'expense' && t.isInstallment)
+   .sort((a,b) => new Date(b.date) - new Date(a.date));
+
+   if (parcelas.length === 0) {
+      activityList.innerHTML = `
+         <tr>
+           <td colspan="4" class="py-10 text-center text- uppercase font-black text-slate-600 italic">Sem parcelas cadastradas</td>
+         </tr>
+      `;
+   } else {
+      parcelas.forEach(t => {
+         const valorTotal = t.amount;
+         const qtdParcelas = t.installments || 1;
+         const valorParcela = valorTotal / qtdParcelas;
+
+         const tr = document.createElement('tr');
+         tr.className = "hover:bg-slate-900/30 transition-all";
+         tr.innerHTML = `
+           <td class="py-3 px-2">
+             <p class="text-xs font-bold text-white uppercase">${t.description}</p>
+
+           </td>
+           <td class="py-3 px-2">
+             <span class="text-blue-400 px-2 py-1 rounded text- font-black whitespace-nowrap">${qtdParcelas}x de ${formatBRL(valorParcela)}</span>
+           </td>
+           <td class="py-3 px-2">
+             <span class="px-2 py-0.5 rounded text- font-black uppercase bg-slate-700/50 text-slate-400">${t.category || 'GERAL'}</span>
+           </td>
+           <td class="py-3 px-2 text-right">
+             <p class="text-xs font-black text-red-accent">- ${formatBRL(valorParcela)}</p>
+           </td>
+         `;
+         activityList.appendChild(tr);
+      });
+   }
+}
   if (typeof lucide !== 'undefined') lucide.createIcons();
 }
 
@@ -1778,12 +1792,13 @@
           </div>
           <table class="w-full text-left border-collapse">
              <thead>
-                <tr class="border-b border-slate-300 text-[10px] font-black uppercase text-slate-400">
-                   <th class="py-3">Descrição</th>
-                   <th class="py-3">Categoria</th>
-                   <th class="py-3 text-right">Valor</th>
-                </tr>
-             </thead>
+  <tr>
+    <th class="py-3 px-2 text-left text-[9px] font-black uppercase text-slate-600 tracking-wider">Descrição</th>
+    <th class="py-3 px-2 text-left text-[9px] font-black uppercase text-slate-600 tracking-wider">Parcela</th>
+    <th class="py-3 px-2 text-left text-[9px] font-black uppercase text-slate-600 tracking-wider">Status</th>
+    <th class="py-3 px-2 text-right text-[9px] font-black uppercase text-slate-600 tracking-wider">Valor</th>
+  </tr>
+</thead>
              <tbody class="divide-y divide-slate-100 text-xs">
                 ${list.map(t => `
                    <tr>
@@ -1816,14 +1831,25 @@
     };
 
     function initApp() {
-       syncStateFromLocal();
-       const code = localStorage.getItem(`sharingCode_${LOCAL_KEY}`);
-       if (code) state.sharingCode = code;
-       
-       document.getElementById('transaction-date').value = new Date().toISOString().split('T')[0];
-       setupCurrencyMasks();
-       document.querySelectorAll('.nav-tab-btn')[0].click();
-    }
+   syncStateFromLocal();
+   const code = localStorage.getItem(`sharingCode_${LOCAL_KEY}`);
+   if (code) state.sharingCode = code;
+
+   document.getElementById('transaction-date').value = new Date().toISOString().split('T')[0];
+   setupCurrencyMasks();
+   document.querySelectorAll('.nav-tab-btn')[0].click();
+
+   // COLA AQUI O CÓDIGO DOS CLIQUES
+   document.getElementById('card-kpi-income').onclick = () => {
+     document.querySelector('.nav-tab-btn[data-tab="form"]').click();
+     setTimeout(() => document.getElementById('btn-type-income').click(), 50);
+   };
+
+   document.getElementById('card-kpi-expenses').onclick = () => {
+     document.querySelector('.nav-tab-btn[data-tab="form"]').click();
+     setTimeout(() => document.getElementById('btn-type-expense').click(), 50);
+   };
+}
 
     window.onload = () => {
        seedInitialData();
