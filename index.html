@@ -262,9 +262,7 @@
           <div class="bg-card-dark p-6 rounded-3xl lg:col-span-2 flex flex-col h-full min-h-[350px]">
             <div class="flex justify-between items-center mb-6">
               <h3 class="text-sm font-black text-white uppercase tracking-wider">Minhas Prestações</h3>
-              <button id="btn-dashboard-view-statement" class="p-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl transition-all" title="Ver Extrato Geral">
-                <i data-lucide="file-text" class="w-4 h-4"></i>
-              </button>
+              
             </div>
 
             <div class="flex-1 overflow-x-auto">
@@ -373,6 +371,13 @@
         
         <div class="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-hide" id="history-months-scroll">
         </div>
+
+<div class="flex justify-end mt-2">
+  <button id="btn-history-view-statement" class="flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-slate-955 rounded-xl text-[10px] font-black uppercase transition-all">
+    <i data-lucide="file-text" class="w-4 h-4"></i>
+    Ver Extrato Geral
+  </button>
+</div>
 
         <div class="bg-card-dark p-5 rounded-3xl space-y-4">
           <div class="relative">
@@ -1100,7 +1105,15 @@
                ${t.installmentLabel ? `<span class="bg-blue-500/15 text-blue-400 px-2 py-1 rounded text-[9px] font-black whitespace-nowrap">Parc ${t.installmentLabel}</span>` : ''}
                <div class="shrink-0 flex flex-col items-end gap-1.5 text-right">
                   ${formattedDate ? `<span class="text-[10px] font-black text-slate-400 uppercase">${formattedDate}</span>` : ''}
-                  <div class="text-sm font-black whitespace-nowrap ${isIncome || isPaid ? 'text-green-accent' : 'text-red-accent'} select-none">
+
+
+
+
+<div class="text-sm font-black whitespace-nowrap ${isIncome ? 'text-green-accent' : (isPaid ? 'text-blue-500' : 'text-red-accent')} select-none">
+   ${isIncome || isPaid ? '' : ''}
+
+
+
                      ${isIncome || isPaid ? '+' : '-'} ${formatBRL(t.displayAmount)}
                   </div>
                </div>
@@ -1762,8 +1775,7 @@
        if (typeof lucide !== 'undefined') lucide.createIcons();
     }
 
-    document.getElementById('btn-dashboard-view-statement').onclick = handleViewStatement;
-    document.getElementById('btn-close-statement').onclick = () => document.getElementById('statement-modal').classList.add('hidden');
+document.getElementById('btn-history-view-statement').onclick = handleViewStatement;    document.getElementById('btn-close-statement').onclick = () => document.getElementById('statement-modal').classList.add('hidden');
     document.getElementById('btn-print-action').onclick = () => window.print();
 
     document.getElementById('search-trans-input').oninput = (e) => {
