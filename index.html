@@ -327,17 +327,18 @@
                 </div>
               </div>
 
-              <div class="grid grid-cols-2 gap-3">
-                <div class="space-y-1">
-                  <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Mês Ref.</label>
-                  <select id="transaction-month" class="w-full p-3.5 rounded-xl font-bold text-xs"></select>
-                </div>
-                <div class="space-y-1">
-                  <label id="lbl-card-origem" class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Conta Origem</label>
-                  <select id="transaction-card" class="w-full p-3.5 rounded-xl font-bold text-xs">
-                  </select>
-                </div>
-              </div>
+<!-- Altere para este formato -->
+<div class="grid grid-cols-3 gap-3">
+  <div class="space-y-1 col-span-1"> <!-- Mês ocupa 1 de 3 partes -->
+    <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Mês Ref.</label>
+    <select id="transaction-month" class="w-full p-3.5 rounded-xl font-bold text-xs"></select>
+  </div>
+  <div class="space-y-1 col-span-2"> <!-- Conta ocupa 2 de 3 partes -->
+    <label id="lbl-card-origem" class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Conta Origem</label>
+    <select id="transaction-card" class="w-full p-3.5 rounded-xl font-bold text-xs">
+    </select>
+  </div>
+</div>
 
               <div id="container-payment-method" class="space-y-1">
                 <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Forma de Pagamento</label>
@@ -1106,15 +1107,10 @@
                <div class="shrink-0 flex flex-col items-end gap-1.5 text-right">
                   ${formattedDate ? `<span class="text-[10px] font-black text-slate-400 uppercase">${formattedDate}</span>` : ''}
 
-
-
-
-<div class="text-sm font-black whitespace-nowrap ${isIncome ? 'text-green-accent' : (isPaid ? 'text-blue-500' : 'text-red-accent')} select-none">
-   ${isIncome || isPaid ? '' : ''}
-
-
-
-                     ${isIncome || isPaid ? '+' : '-'} ${formatBRL(t.displayAmount)}
+<span class="text-[10px] font-black text-slate-400 uppercase">Ref. ${t.billingMonth}</span>
+      
+      <div class="text-sm font-black whitespace-nowrap ${isIncome || isPaid ? 'text-green-accent' : 'text-red-accent'} select-none">
+         ${isIncome || isPaid ? '+' : '-'} ${formatBRL(t.displayAmount)}
                   </div>
                </div>
             </div>
@@ -1710,7 +1706,7 @@
        });
     };
 
-    function handleViewStatement() {
+   function handleViewStatement() {
        const list = expandedTransactions().filter(t => t.displayMonth === state.selectedMonth);
        if (list.length === 0) {
           showToast("Nenhum lançamento no mês para extrato!", "error");
@@ -1722,50 +1718,44 @@
           return acc;
        }, { income: 0, expenses: 0 });
 
+       const netBalance = totals.income - totals.expenses;
+
        const container = document.getElementById('statement-content');
        container.innerHTML = `
           <div class="border-b-4 border-slate-900 pb-8 mb-8 flex justify-between items-end uppercase">
              <div>
                 <h1 class="text-3xl font-black text-slate-900">FinançasPro</h1>
-                <p class="text-[10px] text-slate-400 font-extrabold tracking-widest mt-1">O seu extrato inteligente</p>
+                <p class="text-[10px] text-slate-400 font-extrabold tracking-widest mt-1">Extrato Mensal</p>
              </div>
              <div class="text-right">
                 <p class="text-[9px] font-black text-slate-400">Referência</p>
                 <p class="font-black text-lg leading-none">${state.selectedMonth}</p>
-             </div>
-          </div>
-          <div class="grid grid-cols-3 gap-4 mb-8 text-xs font-black uppercase">
-             <div class="p-4 bg-emerald-50 rounded-2xl border border-emerald-100">
-                <span class="text-[9px] text-emerald-600">Receitas</span>
-                <p class="text-base text-emerald-700 mt-1">${formatBRL(totals.income)}</p>
-             </div>
-             <div class="p-4 bg-rose-50 rounded-2xl border border-rose-100">
-                <span class="text-[9px] text-rose-600">Despesas</span>
-                <p class="text-base text-rose-700 mt-1">${formatBRL(totals.expenses)}</p>
-             </div>
-             <div class="p-4 bg-slate-100 rounded-2xl border border-slate-200">
-                <span class="text-[9px] text-slate-550">Líquido</span>
-                <p class="text-base text-slate-900 mt-1">${formatBRL(totals.income - totals.expenses)}</p>
+                <p class="text-[9px] font-black text-slate-400 mt-2">Saldo Total</p>
+                <p class="font-black text-lg leading-none ${netBalance >= 0 ? 'text-emerald-600' : 'text-rose-600'}">
+                   ${formatBRL(netBalance)}
+                </p>
              </div>
           </div>
           <table class="w-full text-left border-collapse">
              <thead>
-                <tr>
-                  <th class="py-3 px-2 text-left text-[9px] font-black uppercase text-slate-600 tracking-wider">Descrição</th>
-                  <th class="py-3 px-2 text-left text-[9px] font-black uppercase text-slate-600 tracking-wider">Parcela</th>
-                  <th class="py-3 px-2 text-left text-[9px] font-black uppercase text-slate-600 tracking-wider">Status</th>
-                  <th class="py-3 px-2 text-right text-[9px] font-black uppercase text-slate-600 tracking-wider">Valor</th>
+                <tr class="border-b border-slate-200">
+                  <th class="py-3 px-2 text-[9px] font-black uppercase text-slate-600">Categoria</th>
+                  <th class="py-3 px-2 text-[9px] font-black uppercase text-slate-600">Descrição</th>
+                  <th class="py-3 px-2 text-[9px] font-black uppercase text-slate-600">Parcelamento</th>
+                  <th class="py-3 px-2 text-[9px] font-black uppercase text-slate-600">Conta Origem</th>
+                  <th class="py-3 px-2 text-right text-[9px] font-black uppercase text-slate-600">Valor</th>
                 </tr>
               </thead>
-             <tbody class="divide-y divide-slate-100 text-xs">
+             <tbody class="divide-y divide-slate-100 text-[10px]">
                 ${list.map(t => `
                    <tr>
-                      <td class="py-4">
-                         <p class="font-bold text-slate-900 uppercase">${t.description}</p>
-                         <span class="text-[9px] text-slate-400 font-bold uppercase mt-1 block">${t.cardUsed || 'Nenhuma'}</span>
+                      <td class="py-3 px-2 font-bold text-slate-600">${t.category}</td>
+                      <td class="py-3 px-2 font-bold text-slate-900">${t.description}</td>
+                      <td class="py-3 px-2 font-bold text-slate-500">${t.installmentLabel || '-'}</td>
+                      <td class="py-3 px-2 font-bold text-slate-500">${t.cardUsed || 'Nenhuma'}</td>
+                      <td class="py-3 px-2 text-right font-black ${t.type === 'income' ? 'text-emerald-600' : 'text-slate-900'}">
+                         ${t.type === 'income' ? '+' : '-'} ${formatBRL(t.displayAmount)}
                       </td>
-                      <td class="py-4 font-bold text-slate-500 uppercase">${t.category}</td>
-                      <td class="py-4 text-right font-black ${t.type === 'income' ? 'text-emerald-600' : 'text-slate-900'}">${t.type === 'income' ? '+' : '-'} ${formatBRL(t.displayAmount)}</td>
                    </tr>
                 `).join('')}
              </tbody>
