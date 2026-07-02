@@ -1724,16 +1724,19 @@
           <div class="border-b-4 border-slate-900 pb-8 mb-8 flex justify-between items-end uppercase">
              <div>
                 <h1 class="text-3xl font-black text-slate-900">FinançasPro</h1>
-                <p class="text-[10px] text-slate-400 font-extrabold tracking-widest mt-1">Extrato Mensal</p>
+                <p class="text-[12px] text-slate-400 font-extrabold tracking-widest mt-1">Extrato Mensal</p>
              </div>
              <div class="text-right">
-                <p class="text-[9px] font-black text-slate-400">Referência</p>
-                <p class="font-black text-lg leading-none">${state.selectedMonth}</p>
-                <p class="text-[9px] font-black text-slate-400 mt-2">Saldo Total</p>
-                <p class="font-black text-lg leading-none ${netBalance >= 0 ? 'text-emerald-600' : 'text-rose-600'}">
-                   ${formatBRL(netBalance)}
-                </p>
-             </div>
+                  <p class="text-[9px] font-black text-slate-400">Referência</p>
+                  <p class="font-black text-base leading-none">
+                     ${state.selectedMonth}
+                  </p>
+
+                  <p class="text-[12px] font-black text-slate-400 mt-2">Saldo Total</p>
+                  <p class="font-black text-2xl leading-none ${netBalance >= 0 ? 'text-emerald-600' : 'text-rose-600'}">
+        ${formatBRL(netBalance)}
+    </p>
+</div>
           </div>
           <table class="w-full text-left border-collapse">
              <thead>
